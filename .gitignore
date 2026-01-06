@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Zencoder / AI-Tools
+.zencoder
+CLAUDE.md
+
+# Environment variables
+.env.local

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +12,12 @@ export default function Layout() {
     i18n.changeLanguage(newLang)
     localStorage.setItem('language', newLang)
   }
+
+  const menuItems = [
+    { path: '/', label: t('menu.home') },
+    { path: '/services', label: t('menu.services') },
+    { path: '/about', label: t('menu.about') },
+  ]
 
   return (
     <div className="flex h-screen flex-col">
@@ -31,8 +37,16 @@ export default function Layout() {
 
         {menuOpen && (
           <div className="bg-card px-4 py-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
-            <p className="py-2 cursor-pointer hover:text-primary">{t('menu.home')}</p>
-            <p className="py-2 cursor-pointer hover:text-primary">{t('menu.categories')}</p>
+            {menuItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="block py-2 cursor-pointer hover:text-primary"
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         )}
       </nav>

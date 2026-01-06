@@ -1,6 +1,7 @@
 {
   "menu": {
     "home": "Home",
-    "categories": "Categories"
+    "about": "About Us",
+    "services": "Services"
   }
 }
