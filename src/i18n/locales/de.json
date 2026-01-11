@@ -2,6 +2,8 @@
   "menu": {
     "home": "Startseite",
     "about": "Über uns",
-    "services": "Dienstleistungen"
+    "services": "Dienstleistungen",
+    "categories": "Kategorien",
+    "map": "Karte"
   }
 }

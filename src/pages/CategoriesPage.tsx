@@ -1,0 +1,59 @@
+import { useState, useEffect } from 'react'
+import { getCategories } from '@/api/categories'
+import type { Category } from '@/types/Category'
+
+export default function CategoriesPage() {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await getCategories()
+        setCategories(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Fehler beim Laden der Kategorien')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-12">
+      <h1 className="text-4xl font-bold mb-8">Kategorien</h1>
+
+      {loading && <p className="text-muted-foreground">Lädt...</p>}
+
+      {error && <p className="text-destructive">{error}</p>}
+
+      {!loading && !error && categories.length === 0 && (
+        <p className="text-muted-foreground">Keine Kategorien gefunden.</p>
+      )}
+
+      {!loading && !error && categories.length > 0 && (
+        <div className="space-y-4">
+          {categories.map((category) => (
+            <div key={category.kategorie_id} className="p-4 border rounded-lg" style={{ borderColor: 'hsl(var(--border))' }}>
+              <div className="flex items-start gap-3">
+                {category.icon && <span className="text-2xl">{category.icon}</span>}
+                <div>
+                  <h2 className="text-xl font-semibold">{category.bezeichnung}</h2>
+                  <p className="text-sm text-muted-foreground">ID: {category.kategorie_id}</p>
+                  {category.oberkategorie_id > 0 && (
+                    <p className="text-sm text-muted-foreground">Oberkategorie: {category.oberkategorie_id}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

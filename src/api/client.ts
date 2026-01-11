@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -10,20 +10,13 @@ const api: AxiosInstance = axios.create({
   },
 })
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('authToken')
-      window.location.href = '/login'
+      console.warn(
+        'API returned 401 Unauthorized. Auth0 will handle this once backend enforces JWT validation.'
+      )
     }
     return Promise.reject(error)
   }

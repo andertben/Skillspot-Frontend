@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { Outlet, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { useOptionalAuth } from '@/auth/useOptionalAuth'
+import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 
 export default function Layout() {
   const { i18n, t } = useTranslation()
+  const auth = useOptionalAuth()
   const [menuOpen, setMenuOpen] = useState(false)
 
   const toggleLanguage = () => {
@@ -16,11 +19,14 @@ export default function Layout() {
   const menuItems = [
     { path: '/', label: t('menu.home') },
     { path: '/services', label: t('menu.services') },
+    { path: '/categories', label: t('menu.categories') },
+    { path: '/map', label: t('menu.map') },
     { path: '/about', label: t('menu.about') },
   ]
 
   return (
     <div className="flex h-screen flex-col">
+      <SetupAuthInterceptor />
       <nav className="bg-card" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -30,9 +36,33 @@ export default function Layout() {
             <h1 className="text-2xl font-bold">Skillspot</h1>
           </div>
 
-          <Button variant="outline" size="sm" onClick={toggleLanguage}>
-            {i18n.language === 'de' ? 'EN' : 'DE'}
-          </Button>
+          <div className="flex items-center gap-3">
+            {auth.isAuthenticated && auth.user ? (
+              <div className="flex items-center gap-3">
+                <span className="text-sm">{auth.user.name || auth.user.email}</span>
+                <Button variant="outline" size="sm" onClick={() => auth.logout({ returnTo: window.location.origin })}>
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Button size="sm" onClick={() => auth.loginWithRedirect()}>
+                  Login
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => auth.loginWithRedirect({ screen_hint: 'signup' })}
+                >
+                  Signup
+                </Button>
+              </div>
+            )}
+
+            <Button variant="outline" size="sm" onClick={toggleLanguage}>
+              {i18n.language === 'de' ? 'EN' : 'DE'}
+            </Button>
+          </div>
         </div>
 
         {menuOpen && (
