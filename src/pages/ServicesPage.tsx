@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { useTranslation } from 'react-i18next'
+import { MapContainer, TileLayer } from 'react-leaflet'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import UserLocation from '@/components/UserLocation'
 import 'leaflet/dist/leaflet.css'
 
 interface Service {
@@ -14,8 +16,9 @@ interface Service {
 const servicesData: Service[] = []
 
 export default function ServicesPage() {
+  const { t } = useTranslation()
   const [searchTerm, setSearchTerm] = useState('')
-  const position = [52.412, 11.779] as [number, number]
+  const defaultPosition = [52.412, 11.779] as [number, number]
 
   const filteredServices = useMemo(() => {
     return servicesData.filter((service) =>
@@ -26,12 +29,12 @@ export default function ServicesPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">Dienstleistungen</h1>
+      <h1 className="text-4xl font-bold mb-8">{t('pages.services.title')}</h1>
 
       <div className="mb-6">
         <Input
           type="text"
-          placeholder="Dienstleistung suchen..."
+          placeholder={t('pages.services.search')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -41,9 +44,9 @@ export default function ServicesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Beschreibung</TableHead>
-              <TableHead>Preis (€)</TableHead>
+              <TableHead>{t('pages.services.table.name')}</TableHead>
+              <TableHead>{t('pages.services.table.description')}</TableHead>
+              <TableHead>{t('pages.services.table.price')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -59,20 +62,18 @@ export default function ServicesPage() {
       </div>
 
       {filteredServices.length === 0 && (
-        <p className="text-center text-muted-foreground mb-8">Keine Dienstleistungen gefunden.</p>
+        <p className="text-center text-muted-foreground mb-8">{t('pages.services.noResults')}</p>
       )}
 
-      <h2 className="text-2xl font-bold mb-4">Standorte</h2>
+      <h2 className="text-2xl font-bold mb-4">{t('pages.services.locations')}</h2>
       <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
-        <div style={{ height: '400px', width: '100%' }}>
-          <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+        <div style={{ height: '600px', width: '100%' }}>
+          <MapContainer center={defaultPosition} zoom={13} style={{ height: '100%', width: '100%' }}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={position}>
-              <Popup>Skillspot - Magdeburger Str. 50, 14770 Brandenburg an der Havel</Popup>
-            </Marker>
+            <UserLocation />
           </MapContainer>
         </div>
       </div>

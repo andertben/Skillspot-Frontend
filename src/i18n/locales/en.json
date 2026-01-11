@@ -1,9 +1,41 @@
 {
   "menu": {
     "home": "Home",
-    "about": "About Us",
     "services": "Services",
     "categories": "Categories",
-    "map": "Map"
+    "about": "About Us"
+  },
+  "pages": {
+    "home": {
+      "title": "Welcome to Skillspot",
+      "description": "Find services and skills near you"
+    },
+    "services": {
+      "title": "Services",
+      "search": "Search services...",
+      "noResults": "No services found.",
+      "locations": "Locations",
+      "table": {
+        "name": "Name",
+        "description": "Description",
+        "price": "Price (€)"
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "noResults": "No categories found.",
+      "loading": "Loading..."
+    },
+    "about": {
+      "title": "About Us",
+      "description": "Information about Skillspot"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Signup"
   }
 }

@@ -1,9 +1,41 @@
 {
   "menu": {
     "home": "Startseite",
-    "about": "Über uns",
     "services": "Dienstleistungen",
     "categories": "Kategorien",
-    "map": "Karte"
+    "about": "Über uns"
+  },
+  "pages": {
+    "home": {
+      "title": "Willkommen bei Skillspot",
+      "description": "Finden Sie Dienstleistungen und Fähigkeiten in Ihrer Nähe"
+    },
+    "services": {
+      "title": "Dienstleistungen",
+      "search": "Dienstleistung suchen...",
+      "noResults": "Keine Dienstleistungen gefunden.",
+      "locations": "Standorte",
+      "table": {
+        "name": "Name",
+        "description": "Beschreibung",
+        "price": "Preis (€)"
+      }
+    },
+    "categories": {
+      "title": "Kategorien",
+      "noResults": "Keine Kategorien gefunden.",
+      "loading": "Lädt..."
+    },
+    "about": {
+      "title": "Über uns",
+      "description": "Informationen über Skillspot"
+    }
+  },
+  "common": {
+    "loading": "Lädt...",
+    "error": "Ein Fehler ist aufgetreten",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Signup"
   }
 }

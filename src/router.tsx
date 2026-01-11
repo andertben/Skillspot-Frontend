@@ -4,7 +4,6 @@ import HomePage from '@/pages/HomePage'
 import AboutPage from '@/pages/AboutPage'
 import ServicesPage from '@/pages/ServicesPage'
 import CategoriesPage from '@/pages/CategoriesPage'
-import MapPage from '@/pages/MapPage'
 
 export const router = createBrowserRouter([
   {
@@ -25,10 +24,6 @@ export const router = createBrowserRouter([
       {
         path: '/categories',
         element: <CategoriesPage />,
-      },
-      {
-        path: '/map',
-        element: <MapPage />,
       },
     ],
   },

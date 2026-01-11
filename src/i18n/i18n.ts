@@ -4,18 +4,26 @@ import de from './locales/de.json'
 import en from './locales/en.json'
 
 const resources = {
-  en: { translation: en },
   de: { translation: de },
+  en: { translation: en },
 }
+
+const savedLanguage = typeof window !== 'undefined' ? localStorage.getItem('language') : null
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: localStorage.getItem('language') || 'de',
+    lng: savedLanguage || 'de',
     fallbackLng: 'de',
+    defaultNS: 'translation',
+    ns: ['translation'],
+    keySeparator: '.',
     interpolation: {
       escapeValue: false,
+    },
+    react: {
+      useSuspense: false,
     },
   })
 

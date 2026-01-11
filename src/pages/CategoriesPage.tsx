@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getCategories } from '@/api/categories'
 import type { Category } from '@/types/Category'
 
 export default function CategoriesPage() {
+  const { t } = useTranslation()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -15,25 +17,25 @@ export default function CategoriesPage() {
         const data = await getCategories()
         setCategories(data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Fehler beim Laden der Kategorien')
+        setError(err instanceof Error ? err.message : t('common.error'))
       } finally {
         setLoading(false)
       }
     }
 
     fetchCategories()
-  }, [])
+  }, [t])
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">Kategorien</h1>
+      <h1 className="text-4xl font-bold mb-8">{t('pages.categories.title')}</h1>
 
-      {loading && <p className="text-muted-foreground">Lädt...</p>}
+      {loading && <p className="text-muted-foreground">{t('pages.categories.loading')}</p>}
 
       {error && <p className="text-destructive">{error}</p>}
 
       {!loading && !error && categories.length === 0 && (
-        <p className="text-muted-foreground">Keine Kategorien gefunden.</p>
+        <p className="text-muted-foreground">{t('pages.categories.noResults')}</p>
       )}
 
       {!loading && !error && categories.length > 0 && (

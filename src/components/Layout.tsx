@@ -12,15 +12,14 @@ export default function Layout() {
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'de' ? 'en' : 'de'
-    i18n.changeLanguage(newLang)
     localStorage.setItem('language', newLang)
+    i18n.changeLanguage(newLang)
   }
 
   const menuItems = [
     { path: '/', label: t('menu.home') },
     { path: '/services', label: t('menu.services') },
     { path: '/categories', label: t('menu.categories') },
-    { path: '/map', label: t('menu.map') },
     { path: '/about', label: t('menu.about') },
   ]
 
