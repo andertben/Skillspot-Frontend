@@ -2,23 +2,33 @@
   "menu": {
     "home": "Startseite",
     "services": "Dienstleistungen",
+    "map": "Karte",
     "categories": "Kategorien",
     "about": "Über uns"
   },
   "pages": {
     "home": {
       "title": "Willkommen bei Skillspot",
-      "description": "Finden Sie Dienstleistungen und Fähigkeiten in Ihrer Nähe"
+      "description": "Finden Sie Dienstleistungen und Fähigkeiten in Ihrer Nähe",
+      "noCategories": "Keine Kategorien verfügbar"
     },
     "services": {
       "title": "Dienstleistungen",
       "search": "Dienstleistung suchen...",
+      "searchPlaceholder": "Dienstleistung suchen...",
       "noResults": "Keine Dienstleistungen gefunden.",
       "locations": "Standorte",
+      "subcategories": "Unterkategorien",
+      "allServices": "Alle",
+      "maxDistance": "Max. Entfernung",
+      "noImage": "Kein Bild",
+      "distanceUnknown": "Entfernung unbekannt",
       "table": {
         "name": "Name",
         "description": "Beschreibung",
-        "price": "Preis (€)"
+        "price": "Preis (€)",
+        "provider": "Anbieter",
+        "distance": "Entfernung"
       }
     },
     "categories": {
@@ -29,6 +39,9 @@
     "about": {
       "title": "Über uns",
       "description": "Informationen über Skillspot"
+    },
+    "map": {
+      "title": "Karte"
     }
   },
   "common": {
@@ -37,5 +50,10 @@
     "login": "Login",
     "logout": "Logout",
     "signup": "Signup"
+  },
+  "map": {
+    "center": "Zentrieren",
+    "locating": "Ortung...",
+    "youAreHere": "Du bist hier"
   }
 }

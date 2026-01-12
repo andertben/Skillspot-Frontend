@@ -19,7 +19,7 @@ export default function Layout() {
   const menuItems = [
     { path: '/', label: t('menu.home') },
     { path: '/services', label: t('menu.services') },
-    { path: '/categories', label: t('menu.categories') },
+    { path: '/map', label: t('menu.map') },
     { path: '/about', label: t('menu.about') },
   ]
 
@@ -32,7 +32,9 @@ export default function Layout() {
             <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl font-bold">
               ☰
             </button>
-            <h1 className="text-2xl font-bold">Skillspot</h1>
+            <Link to="/" className="text-2xl font-bold hover:text-primary transition-colors">
+              Skillspot
+            </Link>
           </div>
 
           <div className="flex items-center gap-3">

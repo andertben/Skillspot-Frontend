@@ -2,23 +2,33 @@
   "menu": {
     "home": "Home",
     "services": "Services",
+    "map": "Map",
     "categories": "Categories",
     "about": "About Us"
   },
   "pages": {
     "home": {
       "title": "Welcome to Skillspot",
-      "description": "Find services and skills near you"
+      "description": "Find services and skills near you",
+      "noCategories": "No categories available"
     },
     "services": {
       "title": "Services",
       "search": "Search services...",
+      "searchPlaceholder": "Search services...",
       "noResults": "No services found.",
       "locations": "Locations",
+      "subcategories": "Subcategories",
+      "allServices": "All",
+      "maxDistance": "Max Distance",
+      "noImage": "No Image",
+      "distanceUnknown": "Distance unknown",
       "table": {
         "name": "Name",
         "description": "Description",
-        "price": "Price (€)"
+        "price": "Price (€)",
+        "provider": "Provider",
+        "distance": "Distance"
       }
     },
     "categories": {
@@ -29,6 +39,9 @@
     "about": {
       "title": "About Us",
       "description": "Information about Skillspot"
+    },
+    "map": {
+      "title": "Map"
     }
   },
   "common": {
@@ -37,5 +50,10 @@
     "login": "Login",
     "logout": "Logout",
     "signup": "Signup"
+  },
+  "map": {
+    "center": "Center",
+    "locating": "Locating...",
+    "youAreHere": "You are here"
   }
 }

@@ -1,0 +1,68 @@
+import type { Service } from '@/types/Service'
+
+export const mockServices: Service[] = [
+  {
+    dienstleistung_id: 1,
+    title: 'Elektroinstallation',
+    beschreibung: 'Professionelle Elektroinstallation und Reparatur',
+    preis: 89.99,
+    kategorie_id: 4,
+    anbieter_id: 1,
+  },
+  {
+    dienstleistung_id: 2,
+    title: 'Reparatur Waschmaschine',
+    beschreibung: 'Reparatur von Waschmaschinen aller Marken',
+    preis: 79.99,
+    kategorie_id: 5,
+    anbieter_id: 2,
+  },
+  {
+    dienstleistung_id: 3,
+    title: 'Wohnungsreinigung',
+    beschreibung: 'Gründliche Reinigung von Wohnungen und Büros',
+    preis: 45.99,
+    kategorie_id: 6,
+    anbieter_id: 3,
+  },
+  {
+    dienstleistung_id: 4,
+    title: 'Englisch Nachhilfe',
+    beschreibung: 'Englischunterricht für Schüler und Erwachsene',
+    preis: 35.99,
+    kategorie_id: 8,
+    anbieter_id: 4,
+  },
+  {
+    dienstleistung_id: 5,
+    title: 'Deutsch Sprachkurs',
+    beschreibung: 'Intensiver Deutschkurs für Anfänger und Fortgeschrittene',
+    preis: 59.99,
+    kategorie_id: 7,
+    anbieter_id: 5,
+  },
+  {
+    dienstleistung_id: 6,
+    title: 'Heizungsreparatur',
+    beschreibung: 'Notfalldienst für Heizungen und Sanitär',
+    preis: 99.99,
+    kategorie_id: 5,
+    anbieter_id: 2,
+  },
+  {
+    dienstleistung_id: 7,
+    title: 'Fensterreinigung',
+    beschreibung: 'Professionelle Fensterreinigung für Privat und Gewerbe',
+    preis: 39.99,
+    kategorie_id: 6,
+    anbieter_id: 3,
+  },
+  {
+    dienstleistung_id: 8,
+    title: 'Mathe Nachhilfe',
+    beschreibung: 'Individuelle Mathematik Nachhilfe',
+    preis: 40.99,
+    kategorie_id: 8,
+    anbieter_id: 6,
+  },
+]
