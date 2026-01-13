@@ -1,19 +1,15 @@
 import api from './client'
 import type { Provider } from '@/types/Provider'
-import { mockProviders } from '@/mocks/providers'
 
 export async function getProviders(): Promise<Provider[]> {
   try {
     const response = await api.get<Provider[]>('/providers')
-    if (response.data.length === 0 && import.meta.env.DEV) {
-      return mockProviders
+    if (import.meta.env.DEV) {
+      console.log(`[BACKEND] GET /providers → ${response.data.length} providers`)
     }
     return response.data
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('Failed to fetch providers, using mock data', error)
-      return mockProviders
-    }
+    console.error('[BACKEND] GET /providers failed:', error)
     throw error
   }
 }

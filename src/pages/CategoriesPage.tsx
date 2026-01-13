@@ -42,15 +42,12 @@ export default function CategoriesPage() {
         <div className="space-y-4">
           {categories.map((category) => (
             <div key={category.kategorie_id} className="p-4 border rounded-lg" style={{ borderColor: 'hsl(var(--border))' }}>
-              <div className="flex items-start gap-3">
-                {category.icon && <span className="text-2xl">{category.icon}</span>}
-                <div>
-                  <h2 className="text-xl font-semibold">{category.bezeichnung}</h2>
-                  <p className="text-sm text-muted-foreground">ID: {category.kategorie_id}</p>
-                  {category.oberkategorie_id > 0 && (
-                    <p className="text-sm text-muted-foreground">Oberkategorie: {category.oberkategorie_id}</p>
-                  )}
-                </div>
+              <div>
+                <h2 className="text-xl font-semibold">{category.bezeichnung}</h2>
+                <p className="text-sm text-muted-foreground">ID: {category.kategorie_id}</p>
+                {category.oberkategorie_id > 0 && (
+                  <p className="text-sm text-muted-foreground">Oberkategorie: {category.oberkategorie_id}</p>
+                )}
               </div>
             </div>
           ))}

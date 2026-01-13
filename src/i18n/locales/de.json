@@ -15,14 +15,16 @@
     "services": {
       "title": "Dienstleistungen",
       "search": "Dienstleistung suchen...",
-      "searchPlaceholder": "Dienstleistung suchen...",
+      "searchPlaceholder": "Dienstleistung, Anbieter, Kategorie durchsuchen...",
       "noResults": "Keine Dienstleistungen gefunden.",
+      "noSearchResults": "Keine Treffer für \"{query}\"",
       "locations": "Standorte",
       "subcategories": "Unterkategorien",
       "allServices": "Alle",
       "maxDistance": "Max. Entfernung",
       "noImage": "Kein Bild",
       "distanceUnknown": "Entfernung unbekannt",
+      "hits": "{count} Treffer",
       "table": {
         "name": "Name",
         "description": "Beschreibung",
@@ -55,5 +57,15 @@
     "center": "Zentrieren",
     "locating": "Ortung...",
     "youAreHere": "Du bist hier"
+  },
+  "auth": {
+    "loading": "Authentifizierung wird überprüft...",
+    "redirecting": "Weiterleitung zum Login...",
+    "notConfigured": "Authentifizierung nicht konfiguriert",
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "popupLoading": "Login-Fenster ist offen...",
+    "popupBlockerHint": "Wenn kein Fenster erscheint, überprüfen Sie Ihren Popup-Blocker",
+    "dismiss": "Schließen"
   }
 }

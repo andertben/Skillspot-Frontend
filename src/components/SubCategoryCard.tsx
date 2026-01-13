@@ -19,13 +19,9 @@ export default function SubCategoryCard({ category, distance }: SubCategoryCardP
         className="h-44 w-full bg-gradient-to-br flex items-center justify-center"
         style={{ background: DEFAULT_GRADIENT }}
       >
-        {category.icon ? (
-          <span className="text-6xl">{category.icon}</span>
-        ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
-            {t('pages.services.noImage')}
-          </div>
-        )}
+        <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+          {t('pages.services.noImage')}
+        </div>
       </div>
 
       <CardContent className="flex-1 flex flex-col justify-between pt-4">

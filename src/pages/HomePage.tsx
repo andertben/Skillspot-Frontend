@@ -56,7 +56,6 @@ export default function HomePage() {
               className="p-6 border rounded-lg hover:shadow-lg transition-shadow hover:bg-accent text-left"
               style={{ borderColor: 'hsl(var(--border))' }}
             >
-              {category.icon && <span className="text-4xl block mb-3">{category.icon}</span>}
               <h2 className="text-2xl font-semibold">{category.bezeichnung}</h2>
             </button>
           ))}

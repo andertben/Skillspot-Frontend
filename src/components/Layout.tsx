@@ -4,16 +4,51 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
+import { AuthLoadingOverlay } from '@/components/AuthLoadingOverlay'
 
 export default function Layout() {
   const { i18n, t } = useTranslation()
   const auth = useOptionalAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [authLoading, setAuthLoading] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'de' ? 'en' : 'de'
     localStorage.setItem('language', newLang)
     i18n.changeLanguage(newLang)
+  }
+
+  const handleLoginClick = async () => {
+    setAuthLoading(true)
+    setAuthError(null)
+    try {
+      await auth.loginWithPopup()
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : t('common.error')
+      setAuthError(errorMessage)
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+
+  const handleSignupClick = async () => {
+    setAuthLoading(true)
+    setAuthError(null)
+    try {
+      await auth.loginWithPopup({
+        authorizationParams: { screen_hint: 'signup' },
+      })
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : t('common.error')
+      setAuthError(errorMessage)
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+
+  const handleDismissError = () => {
+    setAuthError(null)
   }
 
   const menuItems = [
@@ -26,6 +61,11 @@ export default function Layout() {
   return (
     <div className="flex h-screen flex-col">
       <SetupAuthInterceptor />
+      <AuthLoadingOverlay
+        isOpen={authLoading || !!authError}
+        error={authError || undefined}
+        onDismissError={handleDismissError}
+      />
       <nav className="bg-card" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -42,20 +82,21 @@ export default function Layout() {
               <div className="flex items-center gap-3">
                 <span className="text-sm">{auth.user.name || auth.user.email}</span>
                 <Button variant="outline" size="sm" onClick={() => auth.logout({ returnTo: window.location.origin })}>
-                  Logout
+                  {t('common.logout')}
                 </Button>
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Button size="sm" onClick={() => auth.loginWithRedirect()}>
-                  Login
+                <Button size="sm" onClick={handleLoginClick} disabled={authLoading}>
+                  {t('auth.login')}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => auth.loginWithRedirect({ screen_hint: 'signup' })}
+                  onClick={handleSignupClick}
+                  disabled={authLoading}
                 >
-                  Signup
+                  {t('auth.signup')}
                 </Button>
               </div>
             )}

@@ -4,7 +4,7 @@ interface OptionalAuthState {
   isLoading: boolean
   isAuthenticated: boolean
   user: { name?: string; email?: string; sub?: string } | undefined
-  loginWithRedirect: (options?: Record<string, unknown>) => Promise<void> | void
+  loginWithPopup: (options?: Record<string, unknown>) => Promise<void>
   logout: (options?: Record<string, unknown>) => void
   getAccessTokenSilently: (options?: Record<string, unknown>) => Promise<string | null>
   isAuthAvailable: boolean
@@ -23,7 +23,7 @@ export function useOptionalAuth(): OptionalAuthState {
       isLoading: false,
       isAuthenticated: false,
       user: undefined,
-      loginWithRedirect: async () => {
+      loginWithPopup: async () => {
         console.warn(
           'Auth0 not configured. Set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID in .env.local'
         )
@@ -43,7 +43,18 @@ export function useOptionalAuth(): OptionalAuthState {
     isLoading: auth0Context.isLoading,
     isAuthenticated: auth0Context.isAuthenticated,
     user: auth0Context.user,
-    loginWithRedirect: auth0Context.loginWithRedirect,
+    loginWithPopup: async (options?: Record<string, unknown>) => {
+      const audience = import.meta.env.VITE_AUTH0_AUDIENCE
+      const authParams = (options?.authorizationParams as Record<string, unknown>) || {}
+      await auth0Context.loginWithPopup({
+        ...options,
+        authorizationParams: {
+          scope: 'openid profile email',
+          ...(audience && { audience }),
+          ...authParams,
+        },
+      })
+    },
     logout: auth0Context.logout,
     getAccessTokenSilently: async (options?: Record<string, unknown>) => {
       try {

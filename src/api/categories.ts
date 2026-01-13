@@ -1,19 +1,15 @@
 import api from './client'
 import type { Category } from '@/types/Category'
-import { mockCategories } from '@/mocks/categories'
 
 export async function getCategories(): Promise<Category[]> {
   try {
     const response = await api.get<Category[]>('/categories')
-    if (response.data.length === 0 && import.meta.env.DEV) {
-      return mockCategories
+    if (import.meta.env.DEV) {
+      console.log(`[BACKEND] GET /categories → ${response.data.length} categories`)
     }
     return response.data
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('Failed to fetch categories, using mock data', error)
-      return mockCategories
-    }
+    console.error('[BACKEND] GET /categories failed:', error)
     throw error
   }
 }

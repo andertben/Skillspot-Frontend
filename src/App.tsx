@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
+import { SetupAuthInterceptor } from '@/api/client'
 
 interface AppProps {
   children: ReactNode
@@ -13,6 +14,12 @@ const AUTH0_REDIRECT_URI =
 
 const isAuthConfigured = !!(AUTH0_DOMAIN && AUTH0_CLIENT_ID)
 
+function AppContent({ children }: AppProps) {
+  SetupAuthInterceptor()
+
+  return <>{children}</>
+}
+
 export default function App({ children }: AppProps) {
   if (!isAuthConfigured) {
     return <>{children}</>
@@ -24,11 +31,12 @@ export default function App({ children }: AppProps) {
       clientId={AUTH0_CLIENT_ID}
       authorizationParams={{
         redirect_uri: AUTH0_REDIRECT_URI,
+        scope: 'openid profile email',
         ...(AUTH0_AUDIENCE && { audience: AUTH0_AUDIENCE }),
       }}
       cacheLocation="localstorage"
     >
-      {children}
+      <AppContent>{children}</AppContent>
     </Auth0Provider>
   )
 }

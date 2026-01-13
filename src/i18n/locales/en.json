@@ -15,14 +15,16 @@
     "services": {
       "title": "Services",
       "search": "Search services...",
-      "searchPlaceholder": "Search services...",
+      "searchPlaceholder": "Search services, providers, categories...",
       "noResults": "No services found.",
+      "noSearchResults": "No results for \"{query}\"",
       "locations": "Locations",
       "subcategories": "Subcategories",
       "allServices": "All",
       "maxDistance": "Max Distance",
       "noImage": "No Image",
       "distanceUnknown": "Distance unknown",
+      "hits": "{count} results",
       "table": {
         "name": "Name",
         "description": "Description",
@@ -55,5 +57,15 @@
     "center": "Center",
     "locating": "Locating...",
     "youAreHere": "You are here"
+  },
+  "auth": {
+    "loading": "Verifying authentication...",
+    "redirecting": "Redirecting to login...",
+    "notConfigured": "Authentication not configured",
+    "login": "Login",
+    "signup": "Sign Up",
+    "popupLoading": "Login window is open...",
+    "popupBlockerHint": "If no window appears, check your popup blocker",
+    "dismiss": "Dismiss"
   }
 }

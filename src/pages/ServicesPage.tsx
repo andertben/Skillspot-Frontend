@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import SubCategoryCard from '@/components/SubCategoryCard'
@@ -17,8 +18,8 @@ interface ServiceWithDistance extends Service {
   providerName?: string
 }
 
-function isSubCategory(category: Category): boolean {
-  return !!category.oberkategorie_id && category.oberkategorie_id !== 0
+function isMainCategory(category: Category): boolean {
+  return category.oberkategorie_id === 0
 }
 
 export default function ServicesPage() {
@@ -34,7 +35,7 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [maxDistanceKm, setMaxDistanceKm] = useState<number | null>(null)
   const [subId, setSubId] = useState<number | null>(null)
 
@@ -53,6 +54,13 @@ export default function ServicesPage() {
         setCategories(categoriesData)
         setServices(servicesData)
         setProviders(providersData)
+
+        if (import.meta.env.DEV) {
+          console.log('[BACKEND] Loaded data:')
+          console.log(`  - ${categoriesData.length} categories`)
+          console.log(`  - ${servicesData.length} services`)
+          console.log(`  - ${providersData.length} providers`)
+        }
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
@@ -74,16 +82,15 @@ export default function ServicesPage() {
     fetchData()
   }, [t])
 
-  const allSubCategories = categories.filter(isSubCategory)
-  const displayedSubCategories =
-    topId > 0
-      ? allSubCategories.filter((c) => c.oberkategorie_id === topId)
-      : allSubCategories
+  const displayedCategories =
+    topId === 0
+      ? categories.filter(isMainCategory)
+      : categories.filter((c) => c.oberkategorie_id === topId)
 
-  const displayedSubCategoryIds = displayedSubCategories.map((c) => c.kategorie_id)
+  const displayedCategoryIds = displayedCategories.map((c) => c.kategorie_id)
 
-  const servicesInSubCategory = useMemo(() => {
-    if (!subId && displayedSubCategoryIds.length === 0) {
+  const servicesInCategory = useMemo(() => {
+    if (!subId && displayedCategoryIds.length === 0) {
       return []
     }
 
@@ -91,47 +98,59 @@ export default function ServicesPage() {
       return getServicesByCategory(services, subId)
     }
 
-    return services.filter((s) => displayedSubCategoryIds.includes(s.kategorie_id))
-  }, [services, subId, displayedSubCategoryIds])
+    return services.filter((s) => displayedCategoryIds.includes(s.kategorie_id))
+  }, [services, subId, displayedCategoryIds])
+
+  const servicesWithMetadata: ServiceWithDistance[] = useMemo(() => {
+    return servicesInCategory.map((service) => {
+      const provider = getProviderById(providers, service.anbieter_id)
+      let distance: number | undefined
+
+      if (userPosition && provider) {
+        distance = calculateHaversineDistance(
+          userPosition[0],
+          userPosition[1],
+          provider.location_lat,
+          provider.location_lon
+        )
+      }
+
+      return {
+        ...service,
+        distance,
+        providerName: provider?.firmen_name,
+      }
+    })
+  }, [servicesInCategory, providers, userPosition])
 
   const filteredServices: ServiceWithDistance[] = useMemo(() => {
-    return servicesInSubCategory
-      .map((service) => {
-        const provider = getProviderById(providers, service.anbieter_id)
-        let distance: number | undefined
+    return servicesWithMetadata.filter((service) => {
+      const searchLower = searchInput.toLowerCase().trim()
 
-        if (userPosition && provider) {
-          distance = calculateHaversineDistance(
-            userPosition[0],
-            userPosition[1],
-            provider.location_lat,
-            provider.location_lon
-          )
-        }
-
-        return {
-          ...service,
-          distance,
-          providerName: provider?.firmen_name,
-        }
-      })
-      .filter((service) => {
-        const matchesSearch =
-          service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          service.beschreibung.toLowerCase().includes(searchTerm.toLowerCase())
-
+      if (searchLower === '') {
         const matchesDistance =
           !maxDistanceKm || service.distance === undefined || service.distance <= maxDistanceKm
+        return matchesDistance
+      }
 
-        return matchesSearch && matchesDistance
-      })
-  }, [servicesInSubCategory, providers, userPosition, searchTerm, maxDistanceKm])
+      const matchesSearch =
+        service.title.toLowerCase().startsWith(searchLower) ||
+        service.beschreibung.toLowerCase().startsWith(searchLower) ||
+        service.providerName?.toLowerCase().startsWith(searchLower) ||
+        categories.find((c) => c.kategorie_id === service.kategorie_id)?.bezeichnung.toLowerCase().startsWith(searchLower)
 
-  const subCategoryTitle = categories.find((c) => c.kategorie_id === topId)?.bezeichnung
+      const matchesDistance =
+        !maxDistanceKm || service.distance === undefined || service.distance <= maxDistanceKm
+
+      return matchesSearch && matchesDistance
+    })
+  }, [servicesWithMetadata, searchInput, maxDistanceKm, categories])
+
+  const categoryTitle = categories.find((c) => c.kategorie_id === topId)?.bezeichnung
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">{subCategoryTitle || t('pages.services.title')}</h1>
+      <h1 className="text-4xl font-bold mb-8">{categoryTitle || t('pages.services.title')}</h1>
 
       {loading && <p className="text-muted-foreground">{t('common.loading')}</p>}
 
@@ -140,13 +159,24 @@ export default function ServicesPage() {
       {!loading && !error && (
         <>
           <div className="mb-12 flex flex-col md:flex-row gap-4">
-            <Input
-              type="text"
-              placeholder={t('pages.services.searchPlaceholder')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1"
-            />
+            <div className="flex-1 relative">
+              <Input
+                type="text"
+                placeholder={t('pages.services.searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="pr-10"
+              />
+              {searchInput && (
+                <button
+                  onClick={() => setSearchInput('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
 
             {userPosition && (
               <div className="flex items-center gap-2 md:w-40">
@@ -167,22 +197,30 @@ export default function ServicesPage() {
             )}
           </div>
 
-          {displayedSubCategories.length > 0 && (
+          {displayedCategories.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6">{t('pages.services.subcategories')}</h2>
+              <h2 className="text-2xl font-semibold mb-6">
+                {topId === 0 ? t('pages.services.title') : t('pages.services.subcategories')}
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {displayedSubCategories.map((subCat) => {
+                {displayedCategories.map((category) => {
                   const distance = userPosition
-                    ? calculateMinDistanceForCategory(subCat.kategorie_id, userPosition, services, providers)
+                    ? calculateMinDistanceForCategory(category.kategorie_id, userPosition, services, providers)
                     : undefined
 
                   return (
                     <button
-                      key={subCat.kategorie_id}
-                      onClick={() => setSubId(subCat.kategorie_id)}
+                      key={category.kategorie_id}
+                      onClick={() => {
+                        if (topId === 0) {
+                          window.location.href = `/services?top=${category.kategorie_id}`
+                        } else {
+                          setSubId(category.kategorie_id)
+                        }
+                      }}
                       className="text-left"
                     >
-                      <SubCategoryCard category={subCat} distance={distance} />
+                      <SubCategoryCard category={category} distance={distance} />
                     </button>
                   )
                 })}
@@ -191,37 +229,52 @@ export default function ServicesPage() {
           )}
 
           {filteredServices.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">{t('pages.services.noResults')}</p>
+            <div className="text-center py-12">
+              {searchInput && searchInput.trim() !== '' ? (
+                <p className="text-muted-foreground">
+                  {t('pages.services.noSearchResults', { query: searchInput })}
+                </p>
+              ) : (
+                <p className="text-muted-foreground">{t('pages.services.noResults')}</p>
+              )}
+            </div>
           )}
 
           {filteredServices.length > 0 && (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t('pages.services.table.name')}</TableHead>
-                    <TableHead>{t('pages.services.table.description')}</TableHead>
-                    <TableHead>{t('pages.services.table.price')}</TableHead>
-                    <TableHead>{t('pages.services.table.provider')}</TableHead>
-                    {userPosition && <TableHead>{t('pages.services.table.distance')}</TableHead>}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredServices.map((service) => (
-                    <TableRow key={service.dienstleistung_id}>
-                      <TableCell className="font-medium">{service.title}</TableCell>
-                      <TableCell>{service.beschreibung}</TableCell>
-                      <TableCell>{service.preis.toFixed(2)} €</TableCell>
-                      <TableCell>{service.providerName}</TableCell>
-                      {userPosition && (
-                        <TableCell>
-                          {service.distance ? `${service.distance.toFixed(1)} km` : '-'}
-                        </TableCell>
-                      )}
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  {t('pages.services.hits', { count: filteredServices.length })}
+                </p>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('pages.services.table.name')}</TableHead>
+                      <TableHead>{t('pages.services.table.description')}</TableHead>
+                      <TableHead>{t('pages.services.table.price')}</TableHead>
+                      <TableHead>{t('pages.services.table.provider')}</TableHead>
+                      {userPosition && <TableHead>{t('pages.services.table.distance')}</TableHead>}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredServices.map((service) => (
+                      <TableRow key={service.dienstleistung_id}>
+                        <TableCell className="font-medium">{service.title}</TableCell>
+                        <TableCell>{service.beschreibung}</TableCell>
+                        <TableCell>{service.preis.toFixed(2)} €</TableCell>
+                        <TableCell>{service.providerName}</TableCell>
+                        {userPosition && (
+                          <TableCell>
+                            {service.distance ? `${service.distance.toFixed(1)} km` : '-'}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           )}
         </>

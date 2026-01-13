@@ -4,6 +4,7 @@ import HomePage from '@/pages/HomePage'
 import AboutPage from '@/pages/AboutPage'
 import ServicesPage from '@/pages/ServicesPage'
 import MapPage from '@/pages/MapPage'
+import { ProtectedRoute } from '@/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,11 @@ export const router = createBrowserRouter([
       },
       {
         path: '/services',
-        element: <ServicesPage />,
+        element: (
+          <ProtectedRoute>
+            <ServicesPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/map',
