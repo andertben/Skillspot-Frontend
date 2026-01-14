@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getCategories, getTopLevelCategories } from '@/api/categories'
+import { getCategories, getTopLevelCategories, getSubCategories } from '@/api/categories'
 import type { Category } from '@/types/Category'
+import { ChevronRight } from 'lucide-react'
+
+const CATEGORY_COLORS = [
+  { bg: 'bg-gradient-to-br from-blue-400 to-blue-600', light: 'from-blue-50 to-blue-100' },
+  { bg: 'bg-gradient-to-br from-purple-400 to-purple-600', light: 'from-purple-50 to-purple-100' },
+  { bg: 'bg-gradient-to-br from-pink-400 to-pink-600', light: 'from-pink-50 to-pink-100' },
+  { bg: 'bg-gradient-to-br from-green-400 to-green-600', light: 'from-green-50 to-green-100' },
+  { bg: 'bg-gradient-to-br from-orange-400 to-orange-600', light: 'from-orange-50 to-orange-100' },
+  { bg: 'bg-gradient-to-br from-indigo-400 to-indigo-600', light: 'from-indigo-50 to-indigo-100' },
+]
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -30,6 +40,14 @@ export default function HomePage() {
 
   const topCategories = getTopLevelCategories(categories)
 
+  const getSubcategoryCount = (topId: number): number => {
+    return getSubCategories(categories, topId).length
+  }
+
+  const getColorForCategory = (index: number) => {
+    return CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+  }
+
   const handleCategoryClick = (topId: number) => {
     navigate(`/services?top=${topId}`)
   }
@@ -48,17 +66,37 @@ export default function HomePage() {
       )}
 
       {!loading && !error && topCategories.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {topCategories.map((category) => (
-            <button
-              key={category.kategorie_id}
-              onClick={() => handleCategoryClick(category.kategorie_id)}
-              className="p-6 border rounded-lg hover:shadow-lg transition-shadow hover:bg-accent text-left"
-              style={{ borderColor: 'hsl(var(--border))' }}
-            >
-              <h2 className="text-2xl font-semibold">{category.bezeichnung}</h2>
-            </button>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {topCategories.map((category, index) => {
+            const colors = getColorForCategory(index)
+            const subcategoryCount = getSubcategoryCount(category.kategorie_id)
+            return (
+              <button
+                key={category.kategorie_id}
+                onClick={() => handleCategoryClick(category.kategorie_id)}
+                className="rounded-xl overflow-hidden border hover:shadow-lg transition-shadow flex flex-col"
+                style={{ borderColor: 'hsl(var(--border))' }}
+              >
+                <div
+                  className={`bg-gradient-to-br ${colors.light} p-8 min-h-64 flex flex-col justify-between`}
+                >
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                      {category.bezeichnung}
+                    </h2>
+                    <p className="text-gray-600">
+                      {subcategoryCount} Unterkategorien
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <span className="text-sm font-semibold">Erkunden</span>
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+                </div>
+              </button>
+            )
+          })}
         </div>
       )}
     </div>

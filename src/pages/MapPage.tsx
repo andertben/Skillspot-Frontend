@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { UserLocation, RecenterButton } from '@/components/UserLocation'
+import { ProviderMarkers } from '@/components/ProviderMarkers'
 import 'leaflet/dist/leaflet.css'
 
 export default function MapPage() {
@@ -18,6 +19,7 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <UserLocation />
+          <ProviderMarkers />
           <RecenterButton />
         </MapContainer>
       </div>

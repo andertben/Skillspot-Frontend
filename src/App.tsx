@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
-import { SetupAuthInterceptor } from '@/api/client'
+import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 
 interface AppProps {
   children: ReactNode

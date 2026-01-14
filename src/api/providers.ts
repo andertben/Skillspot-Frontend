@@ -15,5 +15,5 @@ export async function getProviders(): Promise<Provider[]> {
 }
 
 export function getProviderById(providers: Provider[], id: number): Provider | undefined {
-  return providers.find((p) => p.anbieter_id === id)
+  return providers.find((p) => p.anbieterId === id)
 }

@@ -4,14 +4,14 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
-import { AuthLoadingOverlay } from '@/components/AuthLoadingOverlay'
+import { AuthLoginModal } from '@/components/AuthLoginModal'
 
 export default function Layout() {
   const { i18n, t } = useTranslation()
   const auth = useOptionalAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [authLoading, setAuthLoading] = useState(false)
-  const [authError, setAuthError] = useState<string | null>(null)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [loginModalError, setLoginModalError] = useState<string | null>(null)
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'de' ? 'en' : 'de'
@@ -20,35 +20,36 @@ export default function Layout() {
   }
 
   const handleLoginClick = async () => {
-    setAuthLoading(true)
-    setAuthError(null)
+    setLoginModalOpen(true)
+    setLoginModalError(null)
     try {
       await auth.loginWithPopup()
+      setLoginModalOpen(false)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t('common.error')
-      setAuthError(errorMessage)
-    } finally {
-      setAuthLoading(false)
+      console.error('[Layout] Login failed:', errorMessage)
+      setLoginModalError(errorMessage)
     }
   }
 
   const handleSignupClick = async () => {
-    setAuthLoading(true)
-    setAuthError(null)
+    setLoginModalOpen(true)
+    setLoginModalError(null)
     try {
       await auth.loginWithPopup({
         authorizationParams: { screen_hint: 'signup' },
       })
+      setLoginModalOpen(false)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t('common.error')
-      setAuthError(errorMessage)
-    } finally {
-      setAuthLoading(false)
+      console.error('[Layout] Signup failed:', errorMessage)
+      setLoginModalError(errorMessage)
     }
   }
 
-  const handleDismissError = () => {
-    setAuthError(null)
+  const handleCloseLoginModal = () => {
+    setLoginModalOpen(false)
+    setLoginModalError(null)
   }
 
   const menuItems = [
@@ -61,10 +62,10 @@ export default function Layout() {
   return (
     <div className="flex h-screen flex-col">
       <SetupAuthInterceptor />
-      <AuthLoadingOverlay
-        isOpen={authLoading || !!authError}
-        error={authError || undefined}
-        onDismissError={handleDismissError}
+      <AuthLoginModal
+        isOpen={loginModalOpen}
+        error={loginModalError}
+        onClose={handleCloseLoginModal}
       />
       <nav className="bg-card" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
         <div className="px-4 py-4 flex items-center justify-between">
@@ -87,14 +88,13 @@ export default function Layout() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Button size="sm" onClick={handleLoginClick} disabled={authLoading}>
+                <Button size="sm" onClick={handleLoginClick}>
                   {t('auth.login')}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleSignupClick}
-                  disabled={authLoading}
                 >
                   {t('auth.signup')}
                 </Button>

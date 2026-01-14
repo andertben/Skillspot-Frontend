@@ -1,8 +1,8 @@
 export interface Service {
-  dienstleistung_id: number
-  title: string
+  dienstleistungId: number
   beschreibung: string
+  title: string
   preis: number
-  kategorie_id: number
-  anbieter_id: number
+  kategorieId: number
+  anbieterId: number
 }
