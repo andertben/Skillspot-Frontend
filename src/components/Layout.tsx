@@ -1,22 +1,25 @@
 import { useState } from 'react'
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 import { AuthLoginModal } from '@/components/AuthLoginModal'
+import { User, ChevronDown } from 'lucide-react'
 
 export default function Layout() {
   const { i18n, t } = useTranslation()
+  const navigate = useNavigate()
   const auth = useOptionalAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [loginModalError, setLoginModalError] = useState<string | null>(null)
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false)
 
-  const toggleLanguage = () => {
-    const newLang = i18n.language === 'de' ? 'en' : 'de'
-    localStorage.setItem('language', newLang)
-    i18n.changeLanguage(newLang)
+  const changeLanguage = (lang: string) => {
+    localStorage.setItem('language', lang)
+    i18n.changeLanguage(lang)
+    setLanguageDropdownOpen(false)
   }
 
   const handleLoginClick = async () => {
@@ -80,12 +83,13 @@ export default function Layout() {
 
           <div className="flex items-center gap-3">
             {auth.isAuthenticated && auth.user ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm">{auth.user.name || auth.user.email}</span>
-                <Button variant="outline" size="sm" onClick={() => auth.logout({ returnTo: window.location.origin })}>
-                  {t('common.logout')}
-                </Button>
-              </div>
+              <button
+                onClick={() => navigate('/account')}
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                title={auth.user.name || auth.user.email}
+              >
+                <User className="w-5 h-5" />
+              </button>
             ) : (
               <div className="flex items-center gap-3">
                 <Button size="sm" onClick={handleLoginClick}>
@@ -101,9 +105,41 @@ export default function Layout() {
               </div>
             )}
 
-            <Button variant="outline" size="sm" onClick={toggleLanguage}>
-              {i18n.language === 'de' ? 'EN' : 'DE'}
-            </Button>
+            <div className="relative">
+              <button
+                onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                className="flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-accent transition-colors"
+                style={{ borderColor: 'hsl(var(--border))' }}
+              >
+                {i18n.language === 'de' ? 'DE' : 'EN'}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+
+              {languageDropdownOpen && (
+                <div
+                  className="absolute right-0 mt-1 bg-card border rounded-lg shadow-lg z-50"
+                  style={{ borderColor: 'hsl(var(--border))' }}
+                >
+                  <button
+                    onClick={() => changeLanguage('de')}
+                    className={`block w-full text-left px-4 py-2 hover:bg-accent transition-colors ${
+                      i18n.language === 'de' ? 'text-primary font-semibold' : ''
+                    }`}
+                  >
+                    Deutsch
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`block w-full text-left px-4 py-2 hover:bg-accent transition-colors border-t ${
+                      i18n.language === 'en' ? 'text-primary font-semibold' : ''
+                    }`}
+                    style={{ borderColor: 'hsl(var(--border))' }}
+                  >
+                    English
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

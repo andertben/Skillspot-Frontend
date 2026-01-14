@@ -44,8 +44,30 @@
     },
     "map": {
       "title": "Map"
+    },
+    "account": {
+      "title": "My Account",
+      "notAuthenticated": "Please log in to manage your account.",
+      "profile": "Profile",
+      "user": "User",
+      "profileInfo": "Profile Information",
+      "name": "Name",
+      "email": "Email",
+      "emailVerification": "Email Verification",
+      "verified": "Verified",
+      "notVerified": "Not verified",
+      "security": "Security",
+      "securityDescription": "Your password is managed by Auth0 and encrypted.",
+      "changePassword": "Change Password",
+      "orderHistory": "Order History",
+      "orderHistoryDescription": "Your booked services will appear here.",
+      "noOrders": "No orders yet.",
+      "accountDetails": "Account Details",
+      "createdAt": "Account created",
+      "updatedAt": "Last updated"
     }
   },
+  "locale": "en-US",
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

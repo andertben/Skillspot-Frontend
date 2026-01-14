@@ -44,8 +44,30 @@
     },
     "map": {
       "title": "Karte"
+    },
+    "account": {
+      "title": "Mein Konto",
+      "notAuthenticated": "Bitte melden Sie sich an, um Ihr Konto zu verwalten.",
+      "profile": "Profil",
+      "user": "Benutzer",
+      "profileInfo": "Profil-Informationen",
+      "name": "Name",
+      "email": "E-Mail",
+      "emailVerification": "E-Mail-Bestätigung",
+      "verified": "Bestätigt",
+      "notVerified": "Nicht bestätigt",
+      "security": "Sicherheit",
+      "securityDescription": "Ihr Passwort wird von Auth0 verwaltet und verschlüsselt gespeichert.",
+      "changePassword": "Passwort ändern",
+      "orderHistory": "Bestellhistorie",
+      "orderHistoryDescription": "Hier erscheinen Ihre gebuchten Services.",
+      "noOrders": "Noch keine Bestellungen.",
+      "accountDetails": "Kontodetails",
+      "createdAt": "Konto erstellt",
+      "updatedAt": "Zuletzt aktualisiert"
     }
   },
+  "locale": "de-DE",
   "common": {
     "loading": "Lädt...",
     "error": "Ein Fehler ist aufgetreten",
