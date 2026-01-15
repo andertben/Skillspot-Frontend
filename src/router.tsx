@@ -5,6 +5,9 @@ import AboutPage from '@/pages/AboutPage'
 import ServicesPage from '@/pages/ServicesPage'
 import MapPage from '@/pages/MapPage'
 import AccountPage from '@/pages/AccountPage'
+import ImpressumPage from '@/pages/ImpressumPage'
+import DatenschutzPage from '@/pages/DatenschutzPage'
+import KontaktPage from '@/pages/KontaktPage'
 import { ProtectedRoute } from '@/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
@@ -38,6 +41,18 @@ export const router = createBrowserRouter([
             <AccountPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: '/impressum',
+        element: <ImpressumPage />,
+      },
+      {
+        path: '/datenschutz',
+        element: <DatenschutzPage />,
+      },
+      {
+        path: '/contact',
+        element: <KontaktPage />,
       },
     ],
   },

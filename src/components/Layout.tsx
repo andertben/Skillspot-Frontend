@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 import { AuthLoginModal } from '@/components/AuthLoginModal'
+import Footer from '@/components/Footer'
 import { User, ChevronDown } from 'lucide-react'
 
 export default function Layout() {
@@ -63,25 +64,41 @@ export default function Layout() {
   ]
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex min-h-screen flex-col">
       <SetupAuthInterceptor />
       <AuthLoginModal
         isOpen={loginModalOpen}
         error={loginModalError}
         onClose={handleCloseLoginModal}
       />
-      <nav className="bg-card" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
-        <div className="px-4 py-4 flex items-center justify-between">
+      <nav className="bg-card sticky top-0 z-50 backdrop-blur-sm" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+        <div className="px-4 py-4 flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
-            <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl font-bold">
+            <button 
+              onClick={() => setMenuOpen(!menuOpen)} 
+              className="lg:hidden p-2 hover:bg-accent rounded-lg transition-colors text-xl"
+              aria-label="Toggle menu"
+            >
               ☰
             </button>
             <Link to="/" className="text-2xl font-bold hover:text-primary transition-colors">
               Skillspot
             </Link>
+            
+            <div className="hidden lg:flex items-center gap-8 ml-8">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {auth.isAuthenticated && auth.user ? (
               <button
                 onClick={() => navigate('/account')}
@@ -91,7 +108,7 @@ export default function Layout() {
                 <User className="w-5 h-5" />
               </button>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2">
                 <Button size="sm" onClick={handleLoginClick}>
                   {t('auth.login')}
                 </Button>
@@ -110,14 +127,15 @@ export default function Layout() {
                 onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
                 className="flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-accent transition-colors"
                 style={{ borderColor: 'hsl(var(--border))' }}
+                aria-label="Language selector"
               >
                 {i18n.language === 'de' ? 'DE' : 'EN'}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className={`w-4 h-4 transition-transform ${languageDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {languageDropdownOpen && (
                 <div
-                  className="absolute right-0 mt-1 bg-card border rounded-lg shadow-lg z-50"
+                  className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg z-50 min-w-36 overflow-hidden border border-t-0"
                   style={{ borderColor: 'hsl(var(--border))' }}
                 >
                   <button
@@ -126,7 +144,7 @@ export default function Layout() {
                       i18n.language === 'de' ? 'text-primary font-semibold' : ''
                     }`}
                   >
-                    Deutsch
+                    {t('languages.de')}
                   </button>
                   <button
                     onClick={() => changeLanguage('en')}
@@ -135,7 +153,7 @@ export default function Layout() {
                     }`}
                     style={{ borderColor: 'hsl(var(--border))' }}
                   >
-                    English
+                    {t('languages.en')}
                   </button>
                 </div>
               )}
@@ -144,17 +162,32 @@ export default function Layout() {
         </div>
 
         {menuOpen && (
-          <div className="bg-card px-4 py-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+          <div className="lg:hidden bg-card px-4 py-3 border-t space-y-2" style={{ borderColor: 'hsl(var(--border))' }}>
             {menuItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className="block py-2 cursor-pointer hover:text-primary"
+                className="block py-2 px-2 cursor-pointer hover:text-primary hover:bg-accent rounded-lg transition-colors text-sm font-medium"
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
+            {!auth.isAuthenticated && (
+              <div className="sm:hidden flex flex-col gap-2 pt-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+                <Button size="sm" onClick={handleLoginClick} className="w-full">
+                  {t('auth.login')}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignupClick}
+                  className="w-full"
+                >
+                  {t('auth.signup')}
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </nav>
@@ -162,6 +195,8 @@ export default function Layout() {
       <main className="flex-1 overflow-auto bg-background">
         <Outlet />
       </main>
+
+      <Footer />
     </div>
   )
 }

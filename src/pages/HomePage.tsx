@@ -85,12 +85,12 @@ export default function HomePage() {
                       {category.bezeichnung}
                     </h2>
                     <p className="text-gray-600">
-                      {subcategoryCount} Unterkategorien
+                      {subcategoryCount} {t('pages.home.services')}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2 text-gray-700">
-                    <span className="text-sm font-semibold">Erkunden</span>
+                    <span className="text-sm font-semibold">{t('pages.home.explore')}</span>
                     <ChevronRight className="w-5 h-5" />
                   </div>
                 </div>

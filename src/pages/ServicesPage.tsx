@@ -75,11 +75,11 @@ export default function ServicesPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">{t('pages.services.title') || 'Dienstleistungen'}</h1>
+      <h1 className="text-4xl font-bold mb-8">{t('pages.services.title')}</h1>
 
       {loading && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">{t('common.loading') || 'Lade Unterkategorien…'}</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       )}
 
@@ -90,7 +90,7 @@ export default function ServicesPage() {
             onClick={handleRetry}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
           >
-            Erneut versuchen
+            {t('pages.services.retry')}
           </button>
         </div>
       )}
@@ -100,7 +100,7 @@ export default function ServicesPage() {
           <div className="mb-8">
             <input
               type="text"
-              placeholder="Suchen..."
+              placeholder={t('pages.services.searchPlaceholder')}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="w-full max-w-md px-4 py-2 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -109,7 +109,7 @@ export default function ServicesPage() {
           </div>
 
           {filteredSubcategories.length === 0 && (
-            <p className="text-muted-foreground text-center py-12">Keine Unterkategorien gefunden.</p>
+            <p className="text-muted-foreground text-center py-12">{t('pages.services.noResults')}</p>
           )}
 
           {filteredSubcategories.length > 0 && (
@@ -123,14 +123,14 @@ export default function ServicesPage() {
                   <div
                     className={`${getColorForCategory(category.kategorie_id)} w-full h-40 flex items-center justify-center rounded-t-lg`}
                   >
-                    <p className="text-sm font-medium text-gray-600">Kein Bild</p>
+                    <p className="text-sm font-medium text-gray-600">{t('pages.services.noImage')}</p>
                   </div>
 
                   <div className="p-4 flex flex-col flex-grow">
                     <h3 className="text-lg font-semibold mb-4 line-clamp-2">{category.bezeichnung}</h3>
 
                     <div className="mt-auto">
-                      <p className="text-sm text-muted-foreground">Entfernung: folgt</p>
+                      <p className="text-sm text-muted-foreground">{t('pages.services.distanceUnknown')}</p>
                     </div>
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export default function ServicesPage() {
       )}
 
       {!loading && !error && subcategories.length === 0 && (
-        <p className="text-muted-foreground text-center py-12">Keine Unterkategorien gefunden.</p>
+        <p className="text-muted-foreground text-center py-12">{t('pages.services.noResults')}</p>
       )}
     </div>
   )

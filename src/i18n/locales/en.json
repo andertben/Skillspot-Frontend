@@ -10,21 +10,24 @@
     "home": {
       "title": "Welcome to Skillspot",
       "description": "Find services and skills near you",
-      "noCategories": "No categories available"
+      "noCategories": "No categories available",
+      "services": "Services",
+      "explore": "Explore"
     },
     "services": {
       "title": "Services",
       "search": "Search services...",
-      "searchPlaceholder": "Search services, providers, categories...",
-      "noResults": "No services found.",
+      "searchPlaceholder": "Search...",
+      "noResults": "No subcategories found.",
       "noSearchResults": "No results for \"{query}\"",
       "locations": "Locations",
       "subcategories": "Subcategories",
       "allServices": "All",
       "maxDistance": "Max Distance",
       "noImage": "No Image",
-      "distanceUnknown": "Distance unknown",
+      "distanceUnknown": "Distance coming soon",
       "hits": "{count} results",
+      "retry": "Try again",
       "table": {
         "name": "Name",
         "description": "Description",
@@ -36,7 +39,9 @@
     "categories": {
       "title": "Categories",
       "noResults": "No categories found.",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "id": "ID",
+      "parentCategory": "Parent Category"
     },
     "about": {
       "title": "About Us",
@@ -78,7 +83,9 @@
   "map": {
     "center": "Center",
     "locating": "Locating...",
-    "youAreHere": "You are here"
+    "youAreHere": "You are here",
+    "geolocationNotSupported": "Geolocation is not supported by this browser",
+    "geolocationFailed": "Geolocation failed"
   },
   "auth": {
     "loading": "Verifying authentication...",
@@ -88,6 +95,24 @@
     "signup": "Sign Up",
     "popupLoading": "Login window is open...",
     "popupBlockerHint": "If no window appears, check your popup blocker",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "close": "Close",
+    "openingWindow": "Opening login window…"
+  },
+  "languages": {
+    "de": "German",
+    "en": "English"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "home": "Home",
+    "services": "Services",
+    "about": "About Us",
+    "contact": "Contact",
+    "legal": "Legal",
+    "impressum": "Imprint",
+    "datenschutz": "Privacy Policy",
+    "projectHint": "Skillspot is a student project of TH Brandenburg.",
+    "copyright": "© 2026 Skillspot. All rights reserved."
   }
 }

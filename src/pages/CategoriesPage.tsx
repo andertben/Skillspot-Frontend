@@ -44,9 +44,9 @@ export default function CategoriesPage() {
             <div key={category.kategorie_id} className="p-4 border rounded-lg" style={{ borderColor: 'hsl(var(--border))' }}>
               <div>
                 <h2 className="text-xl font-semibold">{category.bezeichnung}</h2>
-                <p className="text-sm text-muted-foreground">ID: {category.kategorie_id}</p>
+                <p className="text-sm text-muted-foreground">{t('pages.categories.id')}: {category.kategorie_id}</p>
                 {category.oberkategorie_id > 0 && (
-                  <p className="text-sm text-muted-foreground">Oberkategorie: {category.oberkategorie_id}</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.categories.parentCategory')}: {category.oberkategorie_id}</p>
                 )}
               </div>
             </div>

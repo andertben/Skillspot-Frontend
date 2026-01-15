@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface AuthLoginOverlayProps {
   isOpen: boolean
@@ -9,6 +10,8 @@ interface AuthLoginOverlayProps {
 const ENABLE_AUTH_DEBUG = import.meta.env.DEV
 
 export function AuthLoginModal({ isOpen, error, onClose }: AuthLoginOverlayProps) {
+  const { t } = useTranslation()
+
   useEffect(() => {
     if (!isOpen) return
 
@@ -36,15 +39,15 @@ export function AuthLoginModal({ isOpen, error, onClose }: AuthLoginOverlayProps
           <button
             onClick={onClose}
             className="auth-login-overlay-button"
-            aria-label="Schließen"
+            aria-label={t('auth.close')}
           >
-            Schließen
+            {t('auth.close')}
           </button>
         </div>
       ) : (
         <>
           <div className="auth-login-overlay-spinner" />
-          <p className="auth-login-overlay-text">Login-Fenster wird geöffnet…</p>
+          <p className="auth-login-overlay-text">{t('auth.openingWindow')}</p>
         </>
       )}
     </div>
