@@ -3,7 +3,6 @@ import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
-import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 import { AuthLoginModal } from '@/components/AuthLoginModal'
 import Footer from '@/components/Footer'
 import { User, ChevronDown } from 'lucide-react'
@@ -65,13 +64,12 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <SetupAuthInterceptor />
       <AuthLoginModal
         isOpen={loginModalOpen}
         error={loginModalError}
         onClose={handleCloseLoginModal}
       />
-      <nav className="bg-card sticky top-0 z-50 backdrop-blur-sm" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+      <nav className="sticky top-0 z-50 border-b border-border bg-white" style={{ backgroundColor: 'white' }}>
         <div className="px-4 py-4 flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <button 

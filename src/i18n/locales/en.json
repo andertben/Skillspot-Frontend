@@ -22,6 +22,7 @@
       "noSearchResults": "No results for \"{query}\"",
       "locations": "Locations",
       "subcategories": "Subcategories",
+      "noServicesFound": "No services found.",
       "allServices": "All",
       "maxDistance": "Max Distance",
       "noImage": "No Image",
@@ -85,7 +86,16 @@
     "locating": "Locating...",
     "youAreHere": "You are here",
     "geolocationNotSupported": "Geolocation is not supported by this browser",
-    "geolocationFailed": "Geolocation failed"
+    "geolocationFailed": "Geolocation failed",
+    "routeNotCalculated": "Route not calculated"
+  },
+  "weather": {
+    "title": "14-Day Weather Forecast",
+    "locating": "Determining location...",
+    "locationUnavailable": "Location not available: {{error}}",
+    "locationRequired": "Please share your location for weather information",
+    "loading": "Loading weather...",
+    "loadingError": "Could not load weather data"
   },
   "auth": {
     "loading": "Verifying authentication...",

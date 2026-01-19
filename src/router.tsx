@@ -3,6 +3,7 @@ import Layout from '@/components/Layout'
 import HomePage from '@/pages/HomePage'
 import AboutPage from '@/pages/AboutPage'
 import ServicesPage from '@/pages/ServicesPage'
+import ServicesByCategoryPage from '@/pages/ServicesByCategoryPage'
 import MapPage from '@/pages/MapPage'
 import AccountPage from '@/pages/AccountPage'
 import ImpressumPage from '@/pages/ImpressumPage'
@@ -27,6 +28,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ServicesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/services/category/:categoryId',
+        element: (
+          <ProtectedRoute>
+            <ServicesByCategoryPage />
           </ProtectedRoute>
         ),
       },

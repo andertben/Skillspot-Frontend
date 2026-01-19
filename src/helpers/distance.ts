@@ -25,7 +25,7 @@ export function calculateMinDistanceForCategory(
   services: Service[],
   providers: Provider[]
 ): number | undefined {
-  const servicesInCategory = services.filter((s) => s.kategorie_id === categoryId)
+  const servicesInCategory = services.filter((s) => s.kategorieId === categoryId)
 
   if (servicesInCategory.length === 0) {
     return undefined
@@ -33,14 +33,14 @@ export function calculateMinDistanceForCategory(
 
   const distances = servicesInCategory
     .map((service) => {
-      const provider = providers.find((p) => p.anbieter_id === service.anbieter_id)
+      const provider = providers.find((p) => p.anbieterId === service.anbieterId)
       if (!provider) return Infinity
 
       return calculateHaversineDistance(
         userPosition[0],
         userPosition[1],
-        provider.location_lat,
-        provider.location_lon
+        provider.locationLat,
+        provider.locationLon
       )
     })
     .filter((d) => d !== Infinity)

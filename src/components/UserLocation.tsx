@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useMap } from 'react-leaflet'
 import { Marker, Popup } from 'react-leaflet'
@@ -7,6 +7,7 @@ import L from 'leaflet'
 import iconUrl from '@/assets/leaflet/marker-icon-red.svg'
 import iconRetinaUrl from '@/assets/leaflet/marker-icon-2x-red.svg'
 import shadowUrl from '@/assets/leaflet/marker-shadow.svg'
+import { useUserLocation } from '@/hooks/useUserLocation'
 
 const redIcon = L.icon({
   iconUrl,
@@ -21,26 +22,23 @@ const redIcon = L.icon({
 export function UserLocation() {
   const map = useMap()
   const { t } = useTranslation()
-  const [position, setPosition] = useState<[number, number] | null>(null)
+  const { location, error } = useUserLocation()
+  
+  const position: [number, number] | null = useMemo(() => 
+    location ? [location.lat, location.lon] : null,
+  [location])
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      console.warn('Geolocation wird von diesem Browser nicht unterstützt')
-      return
+    if (position) {
+      map.setView(position, 13)
     }
+  }, [position, map])
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords
-        const userPosition: [number, number] = [latitude, longitude]
-        setPosition(userPosition)
-        map.setView(userPosition, 13)
-      },
-      (error) => {
-        console.warn('Geolocation fehlgeschlagen:', error.message)
-      }
-    )
-  }, [map])
+  useEffect(() => {
+    if (error) {
+      console.warn('Geolocation fehlgeschlagen:', error)
+    }
+  }, [error])
 
   if (!position) return null
 

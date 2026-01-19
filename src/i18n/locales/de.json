@@ -22,6 +22,7 @@
       "noSearchResults": "Keine Treffer für \"{query}\"",
       "locations": "Standorte",
       "subcategories": "Unterkategorien",
+      "noServicesFound": "Keine Dienstleistungen gefunden.",
       "allServices": "Alle",
       "maxDistance": "Max. Entfernung",
       "noImage": "Kein Bild",
@@ -85,7 +86,16 @@
     "locating": "Ortung...",
     "youAreHere": "Du bist hier",
     "geolocationNotSupported": "Geolocation wird von diesem Browser nicht unterstützt",
-    "geolocationFailed": "Geolocation fehlgeschlagen"
+    "geolocationFailed": "Geolocation fehlgeschlagen",
+    "routeNotCalculated": "Route nicht berechnet"
+  },
+  "weather": {
+    "title": "14-Tage-Wettervorhersage",
+    "locating": "Standort wird ermittelt...",
+    "locationUnavailable": "Standort nicht verfügbar: {{error}}",
+    "locationRequired": "Bitte geben Sie Ihren Standort frei für Wetterinformationen",
+    "loading": "Wetter lädt...",
+    "loadingError": "Wetterdaten konnten nicht geladen werden"
   },
   "auth": {
     "loading": "Authentifizierung wird überprüft...",

@@ -3,7 +3,16 @@ import { useAuth0 } from '@auth0/auth0-react'
 interface OptionalAuthState {
   isLoading: boolean
   isAuthenticated: boolean
-  user: { name?: string; email?: string; sub?: string } | undefined
+  user: {
+    name?: string
+    email?: string
+    sub?: string
+    picture?: string
+    email_verified?: boolean
+    created_at?: string
+    updated_at?: string
+    [key: string]: unknown
+  } | undefined
   loginWithPopup: (options?: Record<string, unknown>) => Promise<void>
   logout: (options?: Record<string, unknown>) => void
   getAccessTokenSilently: (options?: Record<string, unknown>) => Promise<string | null>
@@ -18,8 +27,6 @@ const AUTH_AVAILABLE = !!(
 const ENABLE_AUTH_DEBUG = import.meta.env.DEV
 
 export function useOptionalAuth(): OptionalAuthState {
-  const auth0Context = useAuth0()
-
   if (!AUTH_AVAILABLE) {
     return {
       isLoading: false,
@@ -44,6 +51,12 @@ export function useOptionalAuth(): OptionalAuthState {
       isAuthAvailable: false,
     }
   }
+
+  // We must call the hook after checking AUTH_AVAILABLE to avoid crashing 
+  // when Auth0Provider is not rendered. Since AUTH_AVAILABLE is a constant
+  // derived from env vars, this doesn't violate the spirit of Rules of Hooks.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const auth0Context = useAuth0()
 
   return {
     isLoading: auth0Context.isLoading,

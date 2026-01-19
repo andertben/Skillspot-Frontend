@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
-import { SetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
+import { useSetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 
 interface AppProps {
   children: ReactNode
@@ -15,7 +15,7 @@ const AUTH0_REDIRECT_URI =
 const isAuthConfigured = !!(AUTH0_DOMAIN && AUTH0_CLIENT_ID)
 
 function AppContent({ children }: AppProps) {
-  SetupAuthInterceptor()
+  useSetupAuthInterceptor()
 
   return <>{children}</>
 }

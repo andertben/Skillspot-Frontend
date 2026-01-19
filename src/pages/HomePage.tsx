@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { getCategories, getTopLevelCategories, getSubCategories } from '@/api/categories'
 import type { Category } from '@/types/Category'
 import { ChevronRight } from 'lucide-react'
+import { WeatherWidget } from '@/components/WeatherWidget'
 
 const CATEGORY_COLORS = [
   { bg: 'bg-gradient-to-br from-blue-400 to-blue-600', light: 'from-blue-50 to-blue-100' },
@@ -54,8 +55,15 @@ export default function HomePage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12">
-      <h1 className="text-4xl font-bold mb-4">{t('pages.home.title')}</h1>
-      <p className="text-lg text-muted-foreground mb-12">{t('pages.home.description')}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 items-start">
+        <div className="py-2">
+          <h1 className="text-4xl font-bold mb-4">{t('pages.home.title')}</h1>
+          <p className="text-lg text-muted-foreground">{t('pages.home.description')}</p>
+        </div>
+        <div>
+          <WeatherWidget />
+        </div>
+      </div>
 
       {loading && <p className="text-muted-foreground">{t('common.loading')}</p>}
 

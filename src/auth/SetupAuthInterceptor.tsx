@@ -4,7 +4,7 @@ import api from '@/api/client'
 
 const ENABLE_AUTH_DEBUG = import.meta.env.DEV
 
-export function SetupAuthInterceptor() {
+export function useSetupAuthInterceptor() {
   const auth = useOptionalAuth()
 
   useEffect(() => {
@@ -38,7 +38,5 @@ export function SetupAuthInterceptor() {
     return () => {
       api.interceptors.request.eject(requestInterceptor)
     }
-  }, [auth])
-
-  return null
+  }, [auth.isAuthenticated, auth.isAuthAvailable, auth.getAccessTokenSilently, auth])
 }

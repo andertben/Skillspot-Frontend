@@ -27,15 +27,10 @@ export default function SubCategoryCard({ category, distance }: SubCategoryCardP
       <CardContent className="flex-1 flex flex-col justify-between pt-4">
         <h3 className="text-lg font-semibold line-clamp-2 mb-3">{category.bezeichnung}</h3>
 
-        {distance !== undefined ? (
+        {distance !== undefined && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="w-4 h-4 flex-shrink-0" />
             <span>{distance.toFixed(1)} km</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="w-4 h-4 flex-shrink-0" />
-            <span>{t('pages.services.distanceUnknown')}</span>
           </div>
         )}
       </CardContent>

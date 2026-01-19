@@ -3,7 +3,10 @@ import { useMap } from 'react-leaflet'
 import { Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import { getProviders } from '@/api/providers'
+import { getReviews, calculateAverageRating, getProviderReviews } from '@/api/reviews'
 import type { Provider } from '@/types/Provider'
+import type { Review } from '@/types/Review'
+import StarRating from './StarRating'
 import shadowUrl from '@/assets/leaflet/marker-shadow.svg'
 
 const defaultIcon = L.icon({
@@ -19,36 +22,51 @@ const defaultIcon = L.icon({
 export function ProviderMarkers() {
   useMap()
   const [providers, setProviders] = useState<Provider[]>([])
+  const [reviews, setReviews] = useState<Review[]>([])
 
   useEffect(() => {
-    const fetchProviders = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getProviders()
-        setProviders(data)
+        const [providersData, reviewsData] = await Promise.all([
+          getProviders(),
+          getReviews()
+        ])
+        setProviders(providersData)
+        setReviews(reviewsData)
         if (import.meta.env.DEV) {
-          console.log(`[MAP] Loaded ${data.length} providers`)
+          console.log(`[MAP] Loaded ${providersData.length} providers and ${reviewsData.length} reviews`)
         }
       } catch (err) {
-        console.error('[MAP] Failed to load providers:', err)
+        console.error('[MAP] Failed to load data:', err)
       }
     }
 
-    fetchProviders()
+    fetchData()
   }, [])
 
   return (
     <>
-      {providers.map((provider) => (
-        <Marker
-          key={provider.anbieterId}
-          position={[provider.locationLat, provider.locationLon]}
-          icon={defaultIcon}
-        >
-          <Popup>
-            <div className="font-semibold">{provider.firmenName}</div>
-          </Popup>
-        </Marker>
-      ))}
+      {providers.map((provider) => {
+        const providerReviews = getProviderReviews(reviews, provider.anbieterId)
+        const rating = calculateAverageRating(providerReviews)
+
+        return (
+          <Marker
+            key={provider.anbieterId}
+            position={[provider.locationLat, provider.locationLon]}
+            icon={defaultIcon}
+          >
+            <Popup>
+              <div className="flex flex-col gap-1 p-1">
+                <div className="font-bold text-sm leading-tight">{provider.firmenName}</div>
+                <div className="flex items-center">
+                  <StarRating rating={rating} />
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        )
+      })}
     </>
   )
 }

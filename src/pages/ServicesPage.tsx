@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getCategories, getSubCategories } from '@/api/categories'
 import type { Category } from '@/types/Category'
@@ -17,6 +17,7 @@ const CATEGORY_COLORS = [
 
 export default function ServicesPage() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [subcategories, setSubcategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -117,7 +118,8 @@ export default function ServicesPage() {
               {filteredSubcategories.map((category) => (
                 <div
                   key={category.kategorie_id}
-                  className="rounded-lg border overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
+                  onClick={() => navigate(`/services/category/${category.kategorie_id}`)}
+                  className="rounded-lg border overflow-hidden hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
                   style={{ borderColor: 'hsl(var(--border))' }}
                 >
                   <div
@@ -128,10 +130,6 @@ export default function ServicesPage() {
 
                   <div className="p-4 flex flex-col flex-grow">
                     <h3 className="text-lg font-semibold mb-4 line-clamp-2">{category.bezeichnung}</h3>
-
-                    <div className="mt-auto">
-                      <p className="text-sm text-muted-foreground">{t('pages.services.distanceUnknown')}</p>
-                    </div>
                   </div>
                 </div>
               ))}
