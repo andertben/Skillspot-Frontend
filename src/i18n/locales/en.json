@@ -20,6 +20,7 @@
       "searchPlaceholder": "Search...",
       "noResults": "No subcategories found.",
       "noSearchResults": "No results for \"{query}\"",
+      "noReviews": "No reviews available yet",
       "locations": "Locations",
       "subcategories": "Subcategories",
       "noServicesFound": "No services found.",
@@ -79,7 +80,8 @@
     "error": "An error occurred",
     "login": "Login",
     "logout": "Logout",
-    "signup": "Signup"
+    "signup": "Signup",
+    "inquiry": "Inquiry"
   },
   "map": {
     "center": "Center",

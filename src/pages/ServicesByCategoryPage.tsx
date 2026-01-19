@@ -82,6 +82,7 @@ export default function ServicesByCategoryPage() {
   const [error, setError] = useState<string | null>(null)
   
   const [selectedProviderId, setSelectedProviderId] = useState<number | null>(null)
+  const [expandedServiceId, setExpandedServiceId] = useState<number | null>(null)
   const [routeData, setRouteData] = useState<RouteData | null>(null)
   const [roadDistances, setRoadDistances] = useState<Record<number, number>>({})
   
@@ -175,21 +176,29 @@ export default function ServicesByCategoryPage() {
     return calculateAverageRating(providerReviews)
   }
 
-  const handleSelectProvider = async (providerId: number, source: 'card' | 'marker') => {
+  const handleSelectProvider = async (providerId: number, source: 'card' | 'marker', serviceId?: number) => {
     setSelectedProviderId(providerId)
     setRouteData(null)
+
+    // Handle expansion logic
+    if (source === 'card' && serviceId) {
+      setExpandedServiceId(prev => prev === serviceId ? null : serviceId)
+    }
 
     const provider = providersById[providerId]
     if (!provider) return
 
-    // Scroll to card if selected from marker
+    // Scroll to card and expand if selected from marker
     if (source === 'marker') {
       const firstService = services.find(s => s.anbieterId === providerId)
-      if (firstService && cardRefs.current[firstService.dienstleistungId]) {
-        cardRefs.current[firstService.dienstleistungId]?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        })
+      if (firstService) {
+        setExpandedServiceId(firstService.dienstleistungId)
+        if (cardRefs.current[firstService.dienstleistungId]) {
+          cardRefs.current[firstService.dienstleistungId]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+        }
       }
     }
 
@@ -252,6 +261,7 @@ export default function ServicesByCategoryPage() {
             <div className="flex flex-col gap-6 py-2">
               {services.map((service) => {
                 const isSelected = selectedProviderId === service.anbieterId
+                const isExpanded = expandedServiceId === service.dienstleistungId
                 const provider = providersById[service.anbieterId]
                 
                 // Prioritize route distance if selected, otherwise use roadDistance, then Haversine as fallback
@@ -271,6 +281,7 @@ export default function ServicesByCategoryPage() {
                 }
                 
                 const rating = getServiceRating(service.dienstleistungId, service.anbieterId)
+                const serviceReviews = getServiceReviews(reviews, service.dienstleistungId)
 
                 return (
                   <div 
@@ -278,7 +289,7 @@ export default function ServicesByCategoryPage() {
                     ref={(el) => {
                       cardRefs.current[service.dienstleistungId] = el
                     }}
-                    onClick={() => handleSelectProvider(service.anbieterId, 'card')}
+                    onClick={() => handleSelectProvider(service.anbieterId, 'card', service.dienstleistungId)}
                     className={`cursor-pointer transition-all duration-300 rounded-2xl ${
                       isSelected ? 'ring-2 ring-primary shadow-xl scale-[1.01]' : ''
                     }`}
@@ -288,6 +299,8 @@ export default function ServicesByCategoryPage() {
                       providerName={provider?.firmenName}
                       distance={displayDistance}
                       rating={rating}
+                      isExpanded={isExpanded}
+                      reviews={serviceReviews}
                     />
                     {isSelected && !routeData && (
                        <div className="px-5 pb-4">

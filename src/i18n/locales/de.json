@@ -20,6 +20,7 @@
       "searchPlaceholder": "Suchen...",
       "noResults": "Keine Unterkategorien gefunden.",
       "noSearchResults": "Keine Treffer für \"{query}\"",
+      "noReviews": "Noch keine Bewertungen vorhanden",
       "locations": "Standorte",
       "subcategories": "Unterkategorien",
       "noServicesFound": "Keine Dienstleistungen gefunden.",
@@ -79,7 +80,8 @@
     "error": "Ein Fehler ist aufgetreten",
     "login": "Login",
     "logout": "Logout",
-    "signup": "Signup"
+    "signup": "Signup",
+    "inquiry": "Anfragen"
   },
   "map": {
     "center": "Zentrieren",
