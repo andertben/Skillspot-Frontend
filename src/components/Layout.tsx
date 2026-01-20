@@ -71,11 +71,14 @@ export default function Layout() {
         error={loginModalError}
         onClose={handleCloseLoginModal}
       />
-      <nav className="sticky top-0 z-[1001] border-b border-border bg-background">
+      <nav
+        className="sticky top-0 z-[1001] w-full border-b border-border bg-background"
+        style={{ backgroundColor: 'hsl(var(--background) / 1)', opacity: 1 }}
+      >
         <div className="px-4 py-3 flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)} 
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
               className="lg:hidden p-2 hover:bg-accent rounded-lg transition-colors text-xl"
               aria-label="Toggle menu"
             >
@@ -84,7 +87,7 @@ export default function Layout() {
             <Link to="/" className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
               Skillspot
             </Link>
-            
+
             <div className="hidden lg:flex items-center gap-6 ml-8">
               {menuItems.map((item) => {
                 const isActive = location.pathname === item.path
@@ -144,10 +147,10 @@ export default function Layout() {
 
               {languageDropdownOpen && (
                 <div
-                  className="absolute right-0 mt-2 rounded-lg shadow-lg z-[1002] min-w-36 overflow-hidden border"
-                  style={{ 
+                  className="absolute right-0 mt-2 rounded-lg shadow-lg z-[1002] min-w-36 overflow-hidden border bg-background"
+                  style={{
                     borderColor: 'hsl(var(--input))',
-                    backgroundColor: 'hsl(var(--background))' 
+                    backgroundColor: 'hsl(var(--background) / 1)',
                   }}
                 >
                   <button
@@ -174,7 +177,10 @@ export default function Layout() {
         </div>
 
         {menuOpen && (
-          <div className="lg:hidden px-4 py-3 border-t space-y-1 animate-in slide-in-from-top-2 duration-200 bg-background" style={{ borderColor: 'hsl(var(--border))' }}>
+          <div
+            className="lg:hidden px-4 py-3 border-t space-y-1 animate-in slide-in-from-top-2 duration-200 bg-background"
+            style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background) / 1)', opacity: 1 }}
+          >
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path
               return (
