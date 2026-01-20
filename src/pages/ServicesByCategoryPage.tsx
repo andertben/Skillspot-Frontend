@@ -163,7 +163,7 @@ export default function ServicesByCategoryPage() {
     }
     
     fetchRoadDistances()
-  }, [userLocation, visibleProviders])
+  }, [userLocation, visibleProviders, roadDistances])
 
   const getServiceRating = (serviceId: number, providerId: number): number | null => {
     // 1. Try service-specific reviews

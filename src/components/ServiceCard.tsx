@@ -64,12 +64,16 @@ function ReviewList({ reviews }: { reviews: Review[] }) {
             <StarRating rating={review.bewertung} />
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <Calendar className="w-3 h-3" />
-              <span>{new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
+              <span>
+                {review.erstellungsDatum 
+                  ? new Date(review.erstellungsDatum).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+                  : new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+                }
+              </span>
             </div>
           </div>
-          {/* Review text would go here if available in API, for now placeholder if empty */}
           <p className="text-sm leading-relaxed text-foreground/80 italic">
-            "Hervorragende Dienstleistung, sehr professionell und pünktlich. Kann ich nur weiterempfehlen!"
+            {review.text ? `"${review.text}"` : t('pages.services.noReviewText') || '"Kein Kommentar hinterlassen"'}
           </p>
         </div>
       ))}

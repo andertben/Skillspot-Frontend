@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getCategories, getSubCategories } from '@/api/categories'
 import type { Category } from '@/types/Category'
+import { WeatherWidget } from '@/components/WeatherWidget'
 
 const CATEGORY_COLORS = [
   'bg-blue-100',
@@ -20,12 +21,16 @@ export default function ServicesPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [subcategories, setSubcategories] = useState<Category[]>([])
+  const [topCategory, setTopCategory] = useState<Category | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   const [searchText, setSearchText] = useState('')
 
   const topCategoryId = searchParams.get('top') ? parseInt(searchParams.get('top')!) : null
+
+  const isGardening = 
+    topCategory?.bezeichnung.toLowerCase() === 'gartenarbeiten'
 
   const filteredSubcategories = subcategories.filter((category) =>
     category.bezeichnung.toLowerCase().startsWith(searchText.toLowerCase())
@@ -44,12 +49,17 @@ export default function ServicesPage() {
         if (topCategoryId) {
           const filtered = getSubCategories(categories, topCategoryId)
           setSubcategories(filtered)
+          
+          const foundTop = categories.find(c => c.kategorie_id === topCategoryId)
+          setTopCategory(foundTop || null)
+
           if (import.meta.env.DEV) {
             console.log('categories total', categories.length)
             console.log('subcategories', filtered.length, '(filtered by topCategoryId:', topCategoryId, ')')
           }
         } else {
           setSubcategories(allSubcategories)
+          setTopCategory(null)
           if (import.meta.env.DEV) {
             console.log('categories total', categories.length)
             console.log('subcategories', allSubcategories.length, '(all subcategories)')
@@ -76,7 +86,33 @@ export default function ServicesPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">{t('pages.services.title')}</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8 items-end">
+        <div className="lg:col-span-2 space-y-6">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">{t('pages.services.title')}</h1>
+            {topCategory && (
+              <p className="text-lg text-muted-foreground">{topCategory.bezeichnung}</p>
+            )}
+          </div>
+          
+          {!loading && !error && subcategories.length > 0 && (
+            <div className="max-w-md">
+              <input
+                type="text"
+                placeholder={t('pages.services.searchPlaceholder')}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                style={{ borderColor: 'hsl(var(--border))' }}
+              />
+            </div>
+          )}
+        </div>
+        
+        <div className="lg:col-span-2">
+          {isGardening && <WeatherWidget />}
+        </div>
+      </div>
 
       {loading && (
         <div className="text-center py-12">
@@ -98,17 +134,6 @@ export default function ServicesPage() {
 
       {!loading && !error && subcategories.length > 0 && (
         <>
-          <div className="mb-8">
-            <input
-              type="text"
-              placeholder={t('pages.services.searchPlaceholder')}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="w-full max-w-md px-4 py-2 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              style={{ borderColor: 'hsl(var(--border))' }}
-            />
-          </div>
-
           {filteredSubcategories.length === 0 && (
             <p className="text-muted-foreground text-center py-12">{t('pages.services.noResults')}</p>
           )}

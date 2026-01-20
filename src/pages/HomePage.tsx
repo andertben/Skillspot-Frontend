@@ -82,7 +82,7 @@ export default function HomePage() {
               <button
                 key={category.kategorie_id}
                 onClick={() => handleCategoryClick(category.kategorie_id)}
-                className="rounded-xl overflow-hidden border hover:shadow-lg transition-shadow flex flex-col"
+                className="rounded-xl overflow-hidden border hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
                 style={{ borderColor: 'hsl(var(--border))' }}
               >
                 <div

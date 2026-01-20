@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { AuthLoginModal } from '@/components/AuthLoginModal'
 import Footer from '@/components/Footer'
 import { User, ChevronDown } from 'lucide-react'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function Layout() {
   const { i18n, t } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
   const auth = useOptionalAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -69,8 +71,8 @@ export default function Layout() {
         error={loginModalError}
         onClose={handleCloseLoginModal}
       />
-      <nav className="sticky top-0 z-50 border-b border-border bg-white" style={{ backgroundColor: 'white' }}>
-        <div className="px-4 py-4 flex items-center justify-between max-w-7xl mx-auto">
+      <nav className="sticky top-0 z-[1001] border-b border-border bg-background">
+        <div className="px-4 py-3 flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setMenuOpen(!menuOpen)} 
@@ -79,24 +81,33 @@ export default function Layout() {
             >
               ☰
             </button>
-            <Link to="/" className="text-2xl font-bold hover:text-primary transition-colors">
+            <Link to="/" className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
               Skillspot
             </Link>
             
-            <div className="hidden lg:flex items-center gap-8 ml-8">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="text-sm font-medium hover:text-primary transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <div className="hidden lg:flex items-center gap-6 ml-8">
+              {menuItems.map((item) => {
+                const isActive = location.pathname === item.path
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`text-sm font-medium transition-all hover:text-primary relative py-1 ${
+                      isActive ? 'text-primary' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {item.label}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-full animate-in fade-in slide-in-from-bottom-1 duration-300" />
+                    )}
+                  </Link>
+                )
+              })}
             </div>
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {auth.isAuthenticated && auth.user ? (
               <button
                 onClick={() => navigate('/account')}
@@ -124,7 +135,7 @@ export default function Layout() {
               <button
                 onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
                 className="flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-accent transition-colors"
-                style={{ borderColor: 'hsl(var(--border))' }}
+                style={{ borderColor: 'hsl(var(--input))' }}
                 aria-label="Language selector"
               >
                 {i18n.language === 'de' ? 'DE' : 'EN'}
@@ -133,8 +144,11 @@ export default function Layout() {
 
               {languageDropdownOpen && (
                 <div
-                  className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg z-50 min-w-36 overflow-hidden border border-t-0"
-                  style={{ borderColor: 'hsl(var(--border))' }}
+                  className="absolute right-0 mt-2 rounded-lg shadow-lg z-[1002] min-w-36 overflow-hidden border"
+                  style={{ 
+                    borderColor: 'hsl(var(--input))',
+                    backgroundColor: 'hsl(var(--background))' 
+                  }}
                 >
                   <button
                     onClick={() => changeLanguage('de')}
@@ -160,19 +174,26 @@ export default function Layout() {
         </div>
 
         {menuOpen && (
-          <div className="lg:hidden bg-card px-4 py-3 border-t space-y-2" style={{ borderColor: 'hsl(var(--border))' }}>
-            {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="block py-2 px-2 cursor-pointer hover:text-primary hover:bg-accent rounded-lg transition-colors text-sm font-medium"
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <div className="lg:hidden px-4 py-3 border-t space-y-1 animate-in slide-in-from-top-2 duration-200 bg-background" style={{ borderColor: 'hsl(var(--border))' }}>
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.path
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`block py-2.5 px-3 rounded-lg transition-all text-sm font-medium ${
+                    isActive 
+                      ? 'bg-primary/10 text-primary' 
+                      : 'hover:bg-accent hover:text-accent-foreground text-muted-foreground'
+                  }`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
             {!auth.isAuthenticated && (
-              <div className="sm:hidden flex flex-col gap-2 pt-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+              <div className="sm:hidden flex flex-col gap-2 pt-3 mt-2 border-t" style={{ borderColor: 'hsl(var(--border)/0.4)' }}>
                 <Button size="sm" onClick={handleLoginClick} className="w-full">
                   {t('auth.login')}
                 </Button>
