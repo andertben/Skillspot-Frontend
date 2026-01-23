@@ -4,20 +4,8 @@ import { useMap } from 'react-leaflet'
 import { Marker, Popup } from 'react-leaflet'
 import { useTranslation } from 'react-i18next'
 import L from 'leaflet'
-import iconUrl from '@/assets/leaflet/marker-icon-red.svg'
-import iconRetinaUrl from '@/assets/leaflet/marker-icon-2x-red.svg'
-import shadowUrl from '@/assets/leaflet/marker-shadow.svg'
 import { useUserLocation } from '@/hooks/useUserLocation'
-
-const redIcon = L.icon({
-  iconUrl,
-  iconRetinaUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-})
+import { userIcon } from '@/helpers/leafletIcons'
 
 export function UserLocation() {
   const map = useMap()
@@ -43,7 +31,7 @@ export function UserLocation() {
   if (!position) return null
 
   return (
-    <Marker position={position} icon={redIcon}>
+    <Marker position={position} icon={userIcon}>
       <Popup>{t('map.youAreHere')}</Popup>
     </Marker>
   )

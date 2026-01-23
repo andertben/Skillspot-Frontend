@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { useSetupAuthInterceptor } from '@/auth/SetupAuthInterceptor'
 import { useTheme } from '@/hooks/useTheme'
+import { ProfileGate } from '@/components/ProfileGate'
 
 interface AppProps {
   children: ReactNode
@@ -38,7 +39,11 @@ function AppContent({ children }: AppProps) {
     root.classList.add(theme)
   }, [theme])
 
-  return <>{children}</>
+  return (
+    <ProfileGate>
+      {children}
+    </ProfileGate>
+  )
 }
 
 export default function App({ children }: AppProps) {

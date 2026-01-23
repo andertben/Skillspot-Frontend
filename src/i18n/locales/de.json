@@ -50,7 +50,8 @@
       "description": "Informationen über Skillspot"
     },
     "map": {
-      "title": "Karte"
+      "title": "Karte",
+      "viewServices": "Dienstleistungen ansehen"
     },
     "account": {
       "title": "Mein Konto",
@@ -109,7 +110,24 @@
     "popupBlockerHint": "Wenn kein Fenster erscheint, überprüfen Sie Ihren Popup-Blocker",
     "dismiss": "Schließen",
     "close": "Schließen",
-    "openingWindow": "Login-Fenster wird geöffnet…"
+    "openingWindow": "Login-Fenster wird geöffnet…",
+    "profile": {
+      "completeTitle": "Profil vervollständigen",
+      "completeDescription": "Bitte geben Sie Ihren Namen an und wählen Sie Ihre Rolle, um fortzufahren.",
+      "displayName": "Anzeigename",
+      "role": "Rolle",
+      "roleUser": "Kunde",
+      "roleProvider": "Anbieter",
+      "address": "Adresse",
+      "takeAddress": "Adresse übernehmen",
+      "geocodingError": "Adresse konnte nicht gefunden werden",
+      "location": "Standort",
+      "useMyLocation": "Meinen Standort verwenden",
+      "save": "Profil speichern",
+      "saving": "Wird gespeichert...",
+      "saveSuccess": "Profil erfolgreich gespeichert!",
+      "error": "Fehler beim Speichern des Profils"
+    }
   },
   "languages": {
     "de": "Deutsch",

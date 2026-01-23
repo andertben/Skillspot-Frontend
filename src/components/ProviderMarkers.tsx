@@ -1,26 +1,21 @@
 import { useState, useEffect } from 'react'
-import { useMap } from 'react-leaflet'
+import { Link } from 'react-router-dom'
 import { Marker, Popup } from 'react-leaflet'
-import L from 'leaflet'
+import { useTranslation } from 'react-i18next'
 import { getProviders } from '@/api/providers'
 import { getReviews, calculateAverageRating, getProviderReviews } from '@/api/reviews'
 import type { Provider } from '@/types/Provider'
 import type { Review } from '@/types/Review'
 import StarRating from './StarRating'
-import shadowUrl from '@/assets/leaflet/marker-shadow.svg'
+import { providerIcon } from '@/helpers/leafletIcons'
+import { Button } from './ui/button'
 
-const defaultIcon = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-})
+interface ProviderMarkersProps {
+  simplePopup?: boolean
+}
 
-export function ProviderMarkers() {
-  useMap()
+export function ProviderMarkers({ simplePopup }: ProviderMarkersProps) {
+  const { t } = useTranslation()
   const [providers, setProviders] = useState<Provider[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
 
@@ -31,10 +26,12 @@ export function ProviderMarkers() {
           getProviders(),
           getReviews()
         ])
-        setProviders(providersData)
+        // Only show providers with coordinates
+        const validProviders = providersData.filter(p => p.locationLat && p.locationLon)
+        setProviders(validProviders)
         setReviews(reviewsData)
         if (import.meta.env.DEV) {
-          console.log(`[MAP] Loaded ${providersData.length} providers and ${reviewsData.length} reviews`)
+          console.log(`[MAP] Loaded ${validProviders.length} providers with coordinates`)
         }
       } catch (err) {
         console.error('[MAP] Failed to load data:', err)
@@ -53,15 +50,35 @@ export function ProviderMarkers() {
         return (
           <Marker
             key={provider.anbieterId}
-            position={[provider.locationLat, provider.locationLon]}
-            icon={defaultIcon}
+            position={[provider.locationLat!, provider.locationLon!]}
+            icon={providerIcon}
           >
-            <Popup>
-              <div className="flex flex-col gap-1 p-1">
-                <div className="font-bold text-sm leading-tight">{provider.firmenName}</div>
-                <div className="flex items-center">
-                  <StarRating rating={rating} />
-                </div>
+            <Popup minWidth={simplePopup ? 100 : 200}>
+              <div className="flex flex-col gap-2 p-1">
+                <div className="font-bold text-base leading-tight">{provider.firmenName}</div>
+                
+                {!simplePopup && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <StarRating rating={rating} />
+                      <span className="text-xs text-muted-foreground">
+                        ({providerReviews.length})
+                      </span>
+                    </div>
+                    {provider.beschreibung && (
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {provider.beschreibung}
+                      </p>
+                    )}
+                    <div className="pt-2">
+                      <Link to={`/services`}>
+                        <Button size="sm" className="w-full h-8 text-xs">
+                          {t('pages.map.viewServices')}
+                        </Button>
+                      </Link>
+                    </div>
+                  </>
+                )}
               </div>
             </Popup>
           </Marker>

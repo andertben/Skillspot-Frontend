@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
-import L from 'leaflet'
 import { getServices } from '@/api/services'
 import { getCategories } from '@/api/categories'
 import { getProviders } from '@/api/providers'
@@ -19,44 +18,7 @@ import ServiceCard from '@/components/ServiceCard'
 import { ChevronRight, Home, Navigation } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 
-// Fix for default marker icons in Leaflet with Vite
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-import markerIconRed from '@/assets/leaflet/marker-icon-red.svg'
-import markerIcon2xRed from '@/assets/leaflet/marker-icon-2x-red.svg'
-import markerShadowRed from '@/assets/leaflet/marker-shadow.svg'
-
-const defaultIcon = L.icon({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-})
-
-const redIcon = L.icon({
-  iconUrl: markerIconRed,
-  iconRetinaUrl: markerIcon2xRed,
-  shadowUrl: markerShadowRed,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-})
-
-const selectedIcon = L.icon({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-  iconSize: [30, 46],
-  iconAnchor: [15, 46],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-  className: 'hue-rotate-[120deg]', // Simple way to make it look different (greenish)
-})
+import { userIcon, providerIcon, selectedIcon } from '@/helpers/leafletIcons'
 
 // Component to handle map view updates
 function MapController({ center, zoom }: { center: [number, number]; zoom?: number }) {
@@ -327,7 +289,7 @@ export default function ServicesByCategoryPage() {
             />
             
             {userLocation && (
-              <Marker position={[userLocation.lat, userLocation.lon]} icon={redIcon}>
+              <Marker position={[userLocation.lat, userLocation.lon]} icon={userIcon}>
                 <Popup>{t('map.youAreHere')}</Popup>
               </Marker>
             )}
@@ -336,7 +298,7 @@ export default function ServicesByCategoryPage() {
               <Marker 
                 key={provider.anbieterId}
                 position={[provider.locationLat!, provider.locationLon!]}
-                icon={selectedProviderId === provider.anbieterId ? selectedIcon : defaultIcon}
+                icon={selectedProviderId === provider.anbieterId ? selectedIcon : providerIcon}
                 eventHandlers={{
                   click: () => handleSelectProvider(provider.anbieterId, 'marker')
                 }}

@@ -19,7 +19,7 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <UserLocation />
-          <ProviderMarkers />
+          <ProviderMarkers simplePopup />
           <RecenterButton />
         </MapContainer>
       </div>

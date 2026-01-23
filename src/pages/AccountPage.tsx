@@ -1,10 +1,43 @@
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
-import { User, Mail, Clock, Shield, LogOut } from 'lucide-react'
+import { useUserStore } from '@/hooks/useUserStore'
+import { User, Mail, Clock, Shield, LogOut, Loader2, Save, MapPin } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import type { UserRole } from '@/types/User'
 
 export default function AccountPage() {
   const { t } = useTranslation()
   const auth = useOptionalAuth()
+  const { profile, loading, error, fetchProfile, updateProfileDetails } = useUserStore()
+
+  const [displayName, setDisplayName] = useState('')
+  const [role, setRole] = useState<UserRole | ''>('')
+  const [address, setAddress] = useState('')
+  const [locationLat, setLocationLat] = useState<number | null>(null)
+  const [locationLon, setLocationLon] = useState<number | null>(null)
+  const [isGeocoding, setIsGeocoding] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+
+  useEffect(() => {
+    // Only fetch if profile is missing. 
+    // ProfileGate already handles the initial fetch for the app.
+    if (!profile) {
+      fetchProfile()
+    }
+  }, [fetchProfile, profile])
+
+  useEffect(() => {
+    if (profile) {
+      setDisplayName(profile.displayName || '')
+      setRole(profile.role || '')
+      setAddress(profile.address || '')
+      setLocationLat(profile.locationLat ?? null)
+      setLocationLon(profile.locationLon ?? null)
+    }
+  }, [profile])
 
   if (!auth.isAuthenticated || !auth.user) {
     return (
@@ -15,7 +48,80 @@ export default function AccountPage() {
   }
 
   const handleLogout = () => {
-    auth.logout({ returnTo: window.location.origin })
+    auth.logout({ logoutParams: { returnTo: window.location.origin } })
+  }
+
+  const handleGeocode = async () => {
+    if (!address.trim()) return
+
+    setIsGeocoding(true)
+    setLocalError(null)
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+      )
+      const data = await response.json()
+
+      if (data && data.length > 0) {
+        setLocationLat(parseFloat(data[0].lat))
+        setLocationLon(parseFloat(data[0].lon))
+      } else {
+        setLocalError(t('auth.profile.geocodingError'))
+      }
+    } catch {
+      setLocalError(t('auth.profile.geocodingError'))
+    } finally {
+      setIsGeocoding(false)
+    }
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLocalError(null)
+    setSaveSuccess(false)
+
+    if (!displayName.trim()) {
+      setLocalError(t('auth.profile.displayName') + ' ' + t('common.error')) // Or a more specific key if I had one
+      return
+    }
+
+    if (!role) {
+      setLocalError(t('auth.profile.role') + ' ' + t('common.error'))
+      return
+    }
+
+    if (role === 'PROVIDER' && !address.trim()) {
+      setLocalError(t('auth.profile.address') + ' ' + t('common.error'))
+      return
+    }
+
+    if (role === 'PROVIDER' && (locationLat === null || locationLon === null)) {
+      setLocalError("Bitte bestätigen Sie die Adresse mit dem Button 'Adresse übernehmen', um die Standortdaten zu generieren.")
+      return
+    }
+
+    try {
+      await updateProfileDetails({
+        displayName: displayName.trim(),
+        role: role as UserRole,
+        address: role === 'PROVIDER' ? address.trim() : null,
+        locationLat: role === 'PROVIDER' ? locationLat : null,
+        locationLon: role === 'PROVIDER' ? locationLon : null,
+      })
+      setSaveSuccess(true)
+      setTimeout(() => setSaveSuccess(false), 3000)
+    } catch {
+      // Error is handled by store and displayed via error variable
+    }
+  }
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '-'
+    try {
+      return new Date(dateString).toLocaleString('de-DE')
+    } catch {
+      return '-'
+    }
   }
 
   return (
@@ -24,24 +130,24 @@ export default function AccountPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1">
-          <div className="rounded-lg border p-8 text-center" style={{ borderColor: 'hsl(var(--border))' }}>
+          <div className="rounded-lg border p-8 text-center bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
             {auth.user.picture ? (
               <img
                 src={auth.user.picture}
                 alt={auth.user.name || t('pages.account.profile')}
-                className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+                className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-2 border-primary/20"
               />
             ) : (
-              <div className="w-32 h-32 rounded-full mx-auto mb-4 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+              <div className="w-32 h-32 rounded-full mx-auto mb-4 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center border-2 border-primary/20">
                 <User className="w-16 h-16 text-gray-400" />
               </div>
             )}
-            <h2 className="text-2xl font-bold mb-2">{auth.user.name || t('pages.account.user')}</h2>
-            <p className="text-sm text-muted-foreground mb-6">{auth.user.email}</p>
+            <h2 className="text-2xl font-bold mb-2 break-words">{profile?.displayName || auth.user.name || t('pages.account.user')}</h2>
+            <p className="text-sm text-muted-foreground mb-6 break-all">{auth.user.email}</p>
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity font-medium"
             >
               <LogOut className="w-4 h-4" />
               {t('common.logout')}
@@ -50,83 +156,166 @@ export default function AccountPage() {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="space-y-6">
-            <div className="rounded-lg border p-6" style={{ borderColor: 'hsl(var(--border))' }}>
-              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <User className="w-5 h-5" />
+          <form onSubmit={handleSave} className="space-y-6">
+            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
+              <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 border-b pb-4">
+                <User className="w-5 h-5 text-primary" />
                 {t('pages.account.profileInfo')}
               </h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">{t('pages.account.name')}</label>
-                  <p className="text-lg mt-1">{auth.user.name || '-'}</p>
+              
+              <div className="space-y-5">
+                <div className="grid gap-2">
+                  <label htmlFor="displayName" className="text-sm font-medium text-muted-foreground">
+                    {t('pages.account.name')}
+                  </label>
+                  <Input
+                    id="displayName"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    disabled={loading}
+                    placeholder="Anzeigename"
+                  />
                 </div>
-                <div>
+
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Rolle
+                  </label>
+                  <p className="text-base font-medium px-3 py-2 bg-muted/30 rounded-md border border-border/50">
+                    {role === 'PROVIDER' ? t('auth.profile.roleProvider') : t('auth.profile.roleUser')}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground ml-1 italic">
+                    Die Rolle kann nach der Registrierung nicht mehr geändert werden.
+                  </p>
+                </div>
+
+                {role === 'PROVIDER' && (
+                  <div className="grid gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <label htmlFor="address" className="text-sm font-medium text-muted-foreground">
+                      {t('auth.profile.address')}
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Input
+                        id="address"
+                        value={address}
+                        onChange={(e) => {
+                          setAddress(e.target.value)
+                          setLocationLat(null)
+                          setLocationLon(null)
+                        }}
+                        disabled={loading || isGeocoding}
+                        placeholder="Musterstraße 1, 12345 Berlin"
+                        required
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={handleGeocode}
+                        disabled={loading || isGeocoding || !address.trim()}
+                        className="h-10 px-4 shrink-0"
+                      >
+                        {isGeocoding ? <Loader2 className="h-4 w-4 animate-spin" /> : t('auth.profile.takeAddress')}
+                      </Button>
+                    </div>
+                    {locationLat && locationLon && (
+                      <p className="text-[10px] text-green-600 font-semibold ml-1 flex items-center gap-1 animate-in fade-in">
+                        <MapPin className="h-3 w-3" />
+                        ✓ {t('auth.profile.location')} bestätigt: {locationLat.toFixed(4)}, {locationLon.toFixed(4)}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div className="grid gap-2">
                   <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <Mail className="w-4 h-4" />
                     {t('pages.account.email')}
                   </label>
-                  <p className="text-lg mt-1">{auth.user.email || '-'}</p>
+                  <p className="text-base font-medium px-3 py-2 bg-muted/30 rounded-md border border-border/50">
+                    {auth.user.email || '-'}
+                  </p>
                 </div>
-                {auth.user.email_verified !== undefined && (
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">{t('pages.account.emailVerification')}</label>
-                    <p className="text-lg mt-1">
-                      {auth.user.email_verified ? (
-                        <span className="text-green-600">✓ {t('pages.account.verified')}</span>
-                      ) : (
-                        <span className="text-yellow-600">⚠ {t('pages.account.notVerified')}</span>
-                      )}
-                    </p>
+
+                {(error || localError) && (
+                  <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+                    {localError || error}
                   </div>
                 )}
+
+                {saveSuccess && (
+                  <div className="p-3 rounded-md bg-green-500/10 border border-green-500/20 text-green-600 text-sm font-medium">
+                    {t('auth.profile.saveSuccess', 'Profil erfolgreich gespeichert!')}
+                  </div>
+                )}
+
+                <Button 
+                  type="submit" 
+                  disabled={loading || (role === 'PROVIDER' && (!locationLat || !locationLon))}
+                  className="w-full sm:w-auto mt-2"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4 mr-2" />
+                  )}
+                  {t('auth.profile.save')}
+                </Button>
               </div>
             </div>
 
-            <div className="rounded-lg border p-6" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Shield className="w-5 h-5" />
+                <Shield className="w-5 h-5 text-primary" />
                 {t('pages.account.security')}
               </h3>
               <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {t('pages.account.securityDescription')}
                 </p>
-                <button className="px-4 py-2 border rounded-lg hover:bg-accent transition-colors">
+                <button 
+                  type="button"
+                  className="px-4 py-2 border rounded-lg hover:bg-accent transition-colors text-sm font-medium shadow-sm"
+                >
                   {t('pages.account.changePassword')}
                 </button>
               </div>
             </div>
 
-            <div className="rounded-lg border p-6" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5" />
+                <Clock className="w-5 h-5 text-primary" />
                 {t('pages.account.orderHistory')}
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-4 italic">
                 {t('pages.account.orderHistoryDescription')}
               </p>
-              <p className="text-center py-8 text-muted-foreground">{t('pages.account.noOrders')}</p>
+              <p className="text-center py-8 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
+                {t('pages.account.noOrders')}
+              </p>
             </div>
 
-            <div className="rounded-lg border p-6" style={{ borderColor: 'hsl(var(--border))' }}>
-              <h3 className="text-xl font-semibold mb-4">{t('pages.account.accountDetails')}</h3>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="text-muted-foreground">{t('pages.account.createdAt')}:</span>
-                  <span className="ml-2">
-                    {auth.user.created_at ? new Date(auth.user.created_at).toLocaleDateString(t('locale')) : '-'}
+            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" />
+                {t('pages.account.accountDetails')}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
+                  <span className="text-muted-foreground block mb-1 font-medium">{t('pages.account.createdAt')}</span>
+                  <span className="font-semibold text-foreground">
+                    {formatDate(profile?.createdAt)}
                   </span>
-                </p>
-                <p>
-                  <span className="text-muted-foreground">{t('pages.account.updatedAt')}:</span>
-                  <span className="ml-2">
-                    {auth.user.updated_at ? new Date(auth.user.updated_at).toLocaleDateString(t('locale')) : '-'}
+                </div>
+                <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
+                  <span className="text-muted-foreground block mb-1 font-medium">{t('pages.account.updatedAt')}</span>
+                  <span className="font-semibold text-foreground">
+                    {formatDate(profile?.updatedAt)}
                   </span>
-                </p>
+                </div>
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
