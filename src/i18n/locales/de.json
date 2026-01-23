@@ -73,6 +73,18 @@
       "accountDetails": "Kontodetails",
       "createdAt": "Konto erstellt",
       "updatedAt": "Zuletzt aktualisiert"
+    },
+    "chat": {
+      "title": "Chat",
+      "loading": "Lade Chat...",
+      "noMessages": "Schreibe deine Anfrage",
+      "startConversation": "Schreiben Sie die erste Nachricht!",
+      "placeholder": "Nachricht schreiben...",
+      "noAccess": "Kein Zugriff oder bitte anmelden",
+      "loadError": "Fehler beim Laden der Nachrichten",
+      "sendError": "Fehler beim Senden der Nachricht",
+      "pleaseLogin": "Bitte anmelden",
+      "loginRequired": "Sie müssen angemeldet sein, um am Chat teilzunehmen."
     }
   },
   "locale": "de-DE",

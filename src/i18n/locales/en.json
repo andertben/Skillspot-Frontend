@@ -73,6 +73,18 @@
       "accountDetails": "Account Details",
       "createdAt": "Account created",
       "updatedAt": "Last updated"
+    },
+    "chat": {
+      "title": "Chat",
+      "loading": "Loading chat...",
+      "noMessages": "Write your inquiry",
+      "startConversation": "Send the first message!",
+      "placeholder": "Write a message...",
+      "noAccess": "No access or please log in",
+      "loadError": "Error loading messages",
+      "sendError": "Error sending message",
+      "pleaseLogin": "Please log in",
+      "loginRequired": "You must be logged in to participate in the chat."
     }
   },
   "locale": "en-US",

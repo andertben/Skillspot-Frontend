@@ -3,4 +3,5 @@ export interface Provider {
   firmenName: string
   locationLat: number
   locationLon: number
+  beschreibung?: string | null
 }

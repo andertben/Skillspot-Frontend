@@ -9,6 +9,7 @@ import AccountPage from '@/pages/AccountPage'
 import ImpressumPage from '@/pages/ImpressumPage'
 import DatenschutzPage from '@/pages/DatenschutzPage'
 import KontaktPage from '@/pages/KontaktPage'
+import ChatPage from '@/pages/ChatPage'
 import { ProtectedRoute } from '@/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
@@ -62,6 +63,14 @@ export const router = createBrowserRouter([
       {
         path: '/contact',
         element: <KontaktPage />,
+      },
+      {
+        path: '/chat/:threadId',
+        element: (
+          <ProtectedRoute>
+            <ChatPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

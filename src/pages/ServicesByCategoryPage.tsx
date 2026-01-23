@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import { getServices } from '@/api/services'
 import { getCategories } from '@/api/categories'
 import { getProviders } from '@/api/providers'
-import { getReviews, calculateAverageRating, getProviderReviews, getServiceReviews } from '@/api/reviews'
+import { getReviews, calculateAverageRating, getServiceReviews } from '@/api/reviews'
 import { getRoute } from '@/api/routing'
 import type { RouteData } from '@/api/routing'
 import { useUserLocation } from '@/hooks/useUserLocation'
@@ -127,15 +127,16 @@ export default function ServicesByCategoryPage() {
     fetchRoadDistances()
   }, [userLocation, visibleProviders, roadDistances])
 
-  const getServiceRating = (serviceId: number, providerId: number): number | null => {
-    // 1. Try service-specific reviews
+  const getServiceRating = (serviceId: number): number | null => {
+    // ONLY use service-specific reviews
     const serviceReviews = getServiceReviews(reviews, serviceId)
-    const serviceRating = calculateAverageRating(serviceReviews)
-    if (serviceRating !== null) return serviceRating
-
-    // 2. Fallback to provider-specific reviews
-    const providerReviews = getProviderReviews(reviews, providerId)
-    return calculateAverageRating(providerReviews)
+    const rating = calculateAverageRating(serviceReviews)
+    
+    if (import.meta.env.DEV) {
+      console.log(`[DEV] Service ID: ${serviceId}, Review Count: ${serviceReviews.length}, Rating: ${rating}`)
+    }
+    
+    return rating
   }
 
   const handleSelectProvider = async (providerId: number, source: 'card' | 'marker', serviceId?: number) => {
@@ -242,7 +243,7 @@ export default function ServicesByCategoryPage() {
                   )
                 }
                 
-                const rating = getServiceRating(service.dienstleistungId, service.anbieterId)
+                const rating = getServiceRating(service.dienstleistungId)
                 const serviceReviews = getServiceReviews(reviews, service.dienstleistungId)
 
                 return (

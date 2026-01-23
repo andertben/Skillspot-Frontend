@@ -1,8 +1,12 @@
-import { MapPin, ChevronDown, ChevronUp, Calendar } from 'lucide-react'
+import { MapPin, ChevronDown, ChevronUp, Calendar, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import type { Service } from '@/types/Service'
 import type { Review } from '@/types/Review'
 import StarRating from './StarRating'
+import { createThread } from '@/api/chat'
+import { useOptionalAuth } from '@/auth/useOptionalAuth'
 
 interface ServiceCardProps {
   service: Service
@@ -90,6 +94,21 @@ export default function ServiceCard({
   reviews = []
 }: ServiceCardProps) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { isAuthenticated, loginWithPopup } = useOptionalAuth()
+  const [isCreatingThread, setIsCreatingThread] = useState(false)
+
+  const serviceId = Number(service.dienstleistungId)
+  const safeReviews = (reviews || []).filter(r => Number(r.dienstleistungId) === serviceId)
+  const safeRating =
+    rating !== null && rating !== undefined
+      ? rating
+      : safeReviews.length > 0
+        ? safeReviews
+            .filter(r => r.bewertung !== null && r.bewertung !== undefined)
+            .reduce((sum, r) => sum + (Number(r.bewertung) || 0), 0) /
+          Math.max(1, safeReviews.filter(r => r.bewertung !== null && r.bewertung !== undefined).length)
+        : null
 
   return (
     <div className={`bg-card rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-border flex flex-col ${isExpanded ? 'ring-1 ring-primary/20' : ''}`}>
@@ -109,7 +128,7 @@ export default function ServiceCard({
         </div>
 
         <div className="min-h-[24px] flex items-center">
-          <StarRating rating={rating} />
+          <StarRating rating={safeRating} />
         </div>
 
         {!isExpanded && (
@@ -125,13 +144,40 @@ export default function ServiceCard({
               <div />
             )}
 
-            <button 
-              className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-bold hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 border-2 border-primary/10 shadow-sm"
-              onClick={(e) => {
+            <button
+              className="bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-bold hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200 border-2 border-primary/10 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              onClick={async (e) => {
                 e.stopPropagation()
-                // Functionality to be added later
+                if (!isAuthenticated) {
+                  await loginWithPopup()
+                  return
+                }
+
+                try {
+                  setIsCreatingThread(true)
+                  console.log('[ServiceCard] Creating thread for service:', service.dienstleistungId)
+                  const thread = await createThread(String(service.dienstleistungId))
+                  console.log('[ServiceCard] Thread created:', thread)
+                  if (thread && thread.threadId) {
+                    console.log('[ServiceCard] Navigating to:', `/chat/${thread.threadId}`)
+                    navigate(`/chat/${thread.threadId}`, { 
+                      state: { 
+                        serviceTitle: thread.dienstleistungTitle,
+                        providerName: thread.anbieterName
+                      } 
+                    })
+                  } else {
+                    console.error('[ServiceCard] Thread created but no threadId found:', thread)
+                  }
+                } catch (error) {
+                  console.error('Failed to create chat thread:', error)
+                } finally {
+                  setIsCreatingThread(false)
+                }
               }}
+              disabled={isCreatingThread}
             >
+              {isCreatingThread && <Loader2 className="w-4 h-4 animate-spin" />}
               {t('common.inquiry')}
             </button>
           </div>
@@ -139,8 +185,8 @@ export default function ServiceCard({
 
         {isExpanded && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-            {reviews.length > 0 && <RatingBars reviews={reviews} />}
-            <ReviewList reviews={reviews} />
+            {safeReviews.length > 0 && <RatingBars reviews={safeReviews} />}
+            <ReviewList reviews={safeReviews} />
           </div>
         )}
       </div>

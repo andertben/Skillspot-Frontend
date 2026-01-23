@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom'
 import { useMap } from 'react-leaflet'
 import { Marker, Popup } from 'react-leaflet'
 import { useTranslation } from 'react-i18next'
-import L from 'leaflet'
 import { useUserLocation } from '@/hooks/useUserLocation'
 import { userIcon } from '@/helpers/leafletIcons'
 
