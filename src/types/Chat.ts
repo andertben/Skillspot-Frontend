@@ -15,6 +15,15 @@ export interface Thread {
   updatedAt: string
 }
 
+export interface ThreadSummary {
+  threadId: string
+  dienstleistungTitle?: string
+  anbieterName?: string
+  lastMessageAt?: string
+  lastMessageText?: string
+  unreadCount?: number
+}
+
 export interface CreateThreadRequest {
   dienstleistungId: string
 }

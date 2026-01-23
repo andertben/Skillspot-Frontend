@@ -21,6 +21,10 @@
       "noResults": "Keine Unterkategorien gefunden.",
       "noSearchResults": "Keine Treffer für \"{query}\"",
       "noReviews": "Noch keine Bewertungen vorhanden",
+      "noReviewText": "Kein Kommentar hinterlassen",
+      "star": "Stern",
+      "stars": "Sterne",
+      "description": "Beschreibung",
       "locations": "Standorte",
       "subcategories": "Unterkategorien",
       "noServicesFound": "Keine Dienstleistungen gefunden.",
@@ -94,7 +98,8 @@
     "login": "Login",
     "logout": "Logout",
     "signup": "Signup",
-    "inquiry": "Anfragen"
+    "inquiry": "Anfragen",
+    "back": "Zurück"
   },
   "map": {
     "center": "Zentrieren",

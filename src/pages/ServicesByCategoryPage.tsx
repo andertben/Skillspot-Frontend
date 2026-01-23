@@ -5,7 +5,6 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import { getServices } from '@/api/services'
 import { getCategories } from '@/api/categories'
 import { getProviders } from '@/api/providers'
-import { getReviews, calculateAverageRating, getServiceReviews } from '@/api/reviews'
 import { getRoute } from '@/api/routing'
 import type { RouteData } from '@/api/routing'
 import { useUserLocation } from '@/hooks/useUserLocation'
@@ -13,10 +12,10 @@ import { calculateHaversineDistance } from '@/helpers/distance'
 import type { Service } from '@/types/Service'
 import type { Category } from '@/types/Category'
 import type { Provider } from '@/types/Provider'
-import type { Review } from '@/types/Review'
 import ServiceCard from '@/components/ServiceCard'
 import { ChevronRight, Home, Navigation } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
+import { useOptionalAuth } from '@/auth/useOptionalAuth'
 
 import { userIcon, providerIcon, selectedIcon } from '@/helpers/leafletIcons'
 
@@ -36,10 +35,11 @@ export default function ServicesByCategoryPage() {
   const { t } = useTranslation()
   const { location: userLocation } = useUserLocation()
   
+  const auth = useOptionalAuth()
+  
   const [services, setServices] = useState<Service[]>([])
   const [category, setCategory] = useState<Category | null>(null)
   const [providers, setProviders] = useState<Provider[]>([])
-  const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
@@ -54,23 +54,21 @@ export default function ServicesByCategoryPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!categoryId) return
+      if (!categoryId || auth.isLoading) return
       setLoading(true)
       setError(null)
       try {
-        const [allServices, allCategories, allProviders, allReviews] = await Promise.all([
+        const [allServices, allCategories, allProviders] = await Promise.all([
           getServices(),
           getCategories(),
-          getProviders(),
-          getReviews()
+          getProviders()
         ])
         const catId = Number(categoryId)
-        const filteredServices = allServices.filter(s => s.kategorieId === catId)
-        const currentCategory = allCategories.find(c => c.kategorie_id === catId) || null
+        const filteredServices = allServices.filter((s: Service) => s.kategorieId === catId)
+        const currentCategory = allCategories.find((c: Category) => c.kategorie_id === catId) || null
         setServices(filteredServices)
         setCategory(currentCategory)
         setProviders(allProviders)
-        setReviews(allReviews)
       } catch (err) {
         setError(err instanceof Error ? err.message : t('common.error'))
       } finally {
@@ -78,7 +76,7 @@ export default function ServicesByCategoryPage() {
       }
     }
     fetchData()
-  }, [categoryId, t])
+  }, [categoryId, t, auth.isLoading])
 
   const providersById = useMemo(() => {
     const map: Record<number, Provider> = {}
@@ -126,18 +124,6 @@ export default function ServicesByCategoryPage() {
     
     fetchRoadDistances()
   }, [userLocation, visibleProviders, roadDistances])
-
-  const getServiceRating = (serviceId: number): number | null => {
-    // ONLY use service-specific reviews
-    const serviceReviews = getServiceReviews(reviews, serviceId)
-    const rating = calculateAverageRating(serviceReviews)
-    
-    if (import.meta.env.DEV) {
-      console.log(`[DEV] Service ID: ${serviceId}, Review Count: ${serviceReviews.length}, Rating: ${rating}`)
-    }
-    
-    return rating
-  }
 
   const handleSelectProvider = async (providerId: number, source: 'card' | 'marker', serviceId?: number) => {
     setSelectedProviderId(providerId)
@@ -243,9 +229,6 @@ export default function ServicesByCategoryPage() {
                   )
                 }
                 
-                const rating = getServiceRating(service.dienstleistungId)
-                const serviceReviews = getServiceReviews(reviews, service.dienstleistungId)
-
                 return (
                   <div 
                     key={service.dienstleistungId}
@@ -261,9 +244,7 @@ export default function ServicesByCategoryPage() {
                       service={service}
                       providerName={provider?.firmenName}
                       distance={displayDistance}
-                      rating={rating}
                       isExpanded={isExpanded}
-                      reviews={serviceReviews}
                     />
                     {isSelected && !routeData && (
                        <div className="px-5 pb-4">

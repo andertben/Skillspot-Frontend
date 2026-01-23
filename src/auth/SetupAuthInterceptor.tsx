@@ -4,39 +4,43 @@ import api from '@/api/client'
 
 const ENABLE_AUTH_DEBUG = import.meta.env.DEV
 
-export function useSetupAuthInterceptor() {
-  const auth = useOptionalAuth()
+// Use a module-level variable to store the latest auth state
+// This allows the interceptor to be registered once and always have access to the latest state
+let latestAuth: any = null
 
-  useEffect(() => {
-    const requestInterceptor = api.interceptors.request.use(async (config) => {
-      if (auth.isAuthAvailable && auth.isAuthenticated) {
-        try {
-          const audience = import.meta.env.VITE_AUTH0_AUDIENCE
-          const token = await auth.getAccessTokenSilently({
-            authorizationParams: {
-              ...(audience && { audience }),
-            },
-          })
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-            if (ENABLE_AUTH_DEBUG) {
-              console.debug('[Auth0] Token attached to request', {
-                tokenLength: token.length,
-                audience: audience || 'none',
-              })
-            }
-          }
-        } catch (error) {
-          if (ENABLE_AUTH_DEBUG) {
-            console.warn('[Auth0] Failed to attach token:', error instanceof Error ? error.message : error)
-          }
+// Register the interceptor once at module level
+api.interceptors.request.use(async (config) => {
+  if (latestAuth?.isAuthenticated && !latestAuth?.isLoading) {
+    try {
+      const audience = import.meta.env.VITE_AUTH0_AUDIENCE
+      const token = await latestAuth.getAccessTokenSilently({
+        authorizationParams: {
+          ...(audience && { audience }),
+        },
+      })
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+        if (ENABLE_AUTH_DEBUG) {
+          console.debug(`[Auth0] Authorization header attached for: ${config.method?.toUpperCase()} ${config.url}`)
         }
       }
-      return config
-    })
-
-    return () => {
-      api.interceptors.request.eject(requestInterceptor)
+    } catch (error) {
+      if (ENABLE_AUTH_DEBUG) {
+        console.warn('[Auth0] Failed to attach token:', error)
+      }
     }
-  }, [auth.isAuthenticated, auth.isAuthAvailable, auth.getAccessTokenSilently, auth])
+  }
+  return config
+})
+
+export function useSetupAuthInterceptor() {
+  const auth = useOptionalAuth()
+  
+  // Update synchronously during render so children can use it immediately
+  latestAuth = auth
+
+  // Also update on every state change
+  useEffect(() => {
+    latestAuth = auth
+  }, [auth])
 }

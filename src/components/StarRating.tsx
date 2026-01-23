@@ -5,12 +5,25 @@ interface StarRatingProps {
 }
 
 export default function StarRating({ rating }: StarRatingProps) {
-  if (rating === null) {
-    return <span className="text-muted-foreground text-sm">—</span>
+  // Handle null, undefined, or NaN
+  if (rating === null || rating === undefined || isNaN(rating)) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <div className="flex items-center">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Star key={i} className="w-4 h-4 text-gray-300" />
+          ))}
+        </div>
+        <span className="text-xs font-semibold text-muted-foreground">(0.0)</span>
+      </div>
+    )
   }
 
+  // Ensure rating is within 0-5 range and is a valid number
+  const safeRating = Math.max(0, Math.min(5, Number(rating)))
+
   // Round to nearest 0.5
-  const roundedRating = Math.round(rating * 2) / 2
+  const roundedRating = Math.round(safeRating * 2) / 2
   
   const stars = []
   for (let i = 1; i <= 5; i++) {
@@ -43,7 +56,7 @@ export default function StarRating({ rating }: StarRatingProps) {
       <div className="flex items-center">
         {stars}
       </div>
-      <span className="text-xs font-semibold text-muted-foreground">({rating.toFixed(1)})</span>
+      <span className="text-xs font-semibold text-muted-foreground">({safeRating.toFixed(1)})</span>
     </div>
   )
 }

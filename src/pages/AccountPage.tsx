@@ -1,14 +1,20 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { useUserStore } from '@/hooks/useUserStore'
-import { User, Mail, Clock, Shield, LogOut, Loader2, Save, MapPin } from 'lucide-react'
+import { User, Mail, Clock, Shield, LogOut, Loader2, Save, MapPin, MessageSquare, Trash2, PlusCircle, Edit } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import type { UserRole } from '@/types/User'
+import { getMyThreads } from '@/api/chat'
+import { getMyServices, deleteDienstleistung } from '@/api/services'
+import type { ThreadSummary } from '@/types/Chat'
+import type { Service } from '@/types/Service'
 
 export default function AccountPage() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const auth = useOptionalAuth()
   const { profile, loading, error, fetchProfile, updateProfileDetails } = useUserStore()
 
@@ -20,6 +26,14 @@ export default function AccountPage() {
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  
+  const [threads, setThreads] = useState<ThreadSummary[]>([])
+  const [isThreadsLoading, setIsThreadsLoading] = useState(true)
+  const [threadsError, setThreadsError] = useState<string | null>(null)
+
+  const [myServices, setMyServices] = useState<Service[]>([])
+  const [isServicesLoading, setIsServicesLoading] = useState(false)
+  const [servicesError, setServicesError] = useState<string | null>(null)
 
   useEffect(() => {
     // Only fetch if profile is missing. 
@@ -28,6 +42,58 @@ export default function AccountPage() {
       fetchProfile()
     }
   }, [fetchProfile, profile])
+
+  useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        setIsThreadsLoading(true)
+        const data = await getMyThreads()
+        setThreads(data)
+        setThreadsError(null)
+      } catch (err) {
+        console.error('Failed to fetch threads:', err)
+        setThreadsError(t('pages.chat.loadError') || 'Fehler beim Laden der Chats')
+      } finally {
+        setIsThreadsLoading(false)
+      }
+    }
+
+    if (auth.isAuthenticated) {
+      fetchThreads()
+    }
+  }, [auth.isAuthenticated, t])
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setIsServicesLoading(true)
+        const data = await getMyServices()
+        setMyServices(data)
+        setServicesError(null)
+      } catch (err) {
+        console.error('Failed to fetch services:', err)
+        setServicesError('Fehler beim Laden der Dienstleistungen')
+      } finally {
+        setIsServicesLoading(false)
+      }
+    }
+
+    if (auth.isAuthenticated && role === 'PROVIDER') {
+      fetchServices()
+    }
+  }, [auth.isAuthenticated, role])
+
+  const handleDeleteService = async (id: number) => {
+    if (!window.confirm('Möchten Sie diese Dienstleistung wirklich löschen?')) return
+
+    try {
+      await deleteDienstleistung(id)
+      setMyServices(prev => prev.filter(s => s.dienstleistungId !== id))
+    } catch (err) {
+      console.error('Failed to delete service:', err)
+      alert('Fehler beim Löschen der Dienstleistung')
+    }
+  }
 
   useEffect(() => {
     if (profile) {
@@ -263,6 +329,144 @@ export default function AccountPage() {
                 </Button>
               </div>
             </div>
+
+            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
+              <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 border-b pb-4">
+                <MessageSquare className="w-5 h-5 text-primary" />
+                {t('pages.chat.title') || 'Meine Chats'}
+              </h3>
+              
+              <div className="space-y-4">
+                {isThreadsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                ) : threadsError ? (
+                  <p className="text-center py-8 text-destructive bg-destructive/5 rounded-lg border border-dashed border-destructive/20">
+                    {threadsError}
+                  </p>
+                ) : threads.length === 0 ? (
+                  <p className="text-center py-8 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
+                    {t('pages.chat.noMessages') || 'Keine aktiven Chats vorhanden'}
+                  </p>
+                ) : (
+                  <div className="grid gap-3">
+                    {threads.map((thread) => (
+                      <button
+                        key={thread.threadId}
+                        type="button"
+                        onClick={() => navigate(`/chat/${thread.threadId}`)}
+                        className="w-full text-left p-4 rounded-xl border border-border/50 hover:bg-accent hover:border-primary/20 transition-all group relative"
+                      >
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                              {thread.dienstleistungTitle || 'Anfrage'}
+                            </h4>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              {thread.anbieterName}
+                            </p>
+                            {thread.lastMessageText && (
+                              <p className="text-sm text-muted-foreground mt-2 line-clamp-1 italic">
+                                "{thread.lastMessageText}"
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex flex-col items-end gap-2 shrink-0">
+                            {thread.unreadCount ? thread.unreadCount > 0 && (
+                              <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-1 rounded-full">
+                                {thread.unreadCount}
+                              </span>
+                            ) : null}
+                            {thread.lastMessageAt && (
+                              <span className="text-[10px] text-muted-foreground tabular-nums">
+                                {new Date(thread.lastMessageAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {role === 'PROVIDER' && (
+              <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
+                <div className="flex justify-between items-center mb-6 border-b pb-4">
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <PlusCircle className="w-5 h-5 text-primary" />
+                    Meine Dienstleistungen
+                  </h3>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate('/services/new')}
+                    className="flex items-center gap-2"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    Neu erstellen
+                  </Button>
+                </div>
+                
+                <div className="space-y-4">
+                  {isServicesLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    </div>
+                  ) : servicesError ? (
+                    <p className="text-center py-8 text-destructive bg-destructive/5 rounded-lg border border-dashed border-destructive/20">
+                      {servicesError}
+                    </p>
+                  ) : myServices.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
+                      <p className="mb-4">Sie haben noch keine Dienstleistungen erstellt.</p>
+                      <Button onClick={() => navigate('/services/new')} variant="secondary">
+                        Erste Dienstleistung erstellen
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {myServices.map((service) => (
+                        <div
+                          key={service.dienstleistungId}
+                          className="w-full flex justify-between items-center p-4 rounded-xl border border-border/50 bg-card/50"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-bold text-foreground truncate">
+                              {service.title}
+                            </h4>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                              {service.beschreibung || 'Keine Beschreibung'}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 ml-4">
+                            <button
+                              type="button"
+                              onClick={() => navigate(`/services/edit/${service.dienstleistungId}`)}
+                              className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              title="Bearbeiten"
+                            >
+                              <Edit className="w-5 h-5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteService(service.dienstleistungId)}
+                              className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                              title="Löschen"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">

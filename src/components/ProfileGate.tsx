@@ -20,7 +20,7 @@ export function ProfileGate({ children }: ProfileGateProps) {
     else if (!auth.isAuthenticated && profile) {
       reset()
     }
-  }, [auth.isAuthenticated, !!profile, fetchProfile, reset, loading])
+  }, [auth.isAuthenticated, profile, fetchProfile, reset, loading])
 
   // 5) Only show modal if user.profileComplete is false
   const showModal = auth.isAuthenticated && profile !== null && profile.profileComplete === false

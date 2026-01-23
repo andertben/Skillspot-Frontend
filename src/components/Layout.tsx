@@ -1,22 +1,60 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
+import { useUserStore } from '@/hooks/useUserStore'
 import { AuthLoginModal } from '@/components/AuthLoginModal'
 import Footer from '@/components/Footer'
-import { User, ChevronDown } from 'lucide-react'
+import { User, ChevronDown, PlusCircle } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { getUnreadCount } from '@/api/chat'
 
 export default function Layout() {
   const { i18n, t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const auth = useOptionalAuth()
+  const { profile } = useUserStore()
   const [menuOpen, setMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [loginModalError, setLoginModalError] = useState<string | null>(null)
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    let interval: number
+
+    const fetchUnread = async () => {
+      if (auth.isAuthenticated && !auth.isLoading) {
+        try {
+          const count = await getUnreadCount()
+          setUnreadCount(count)
+        } catch (error) {
+          console.error('[Layout] Failed to fetch unread count:', error)
+          setUnreadCount(0)
+        }
+      } else {
+        setUnreadCount(0)
+      }
+    }
+
+    fetchUnread()
+    
+    if (auth.isAuthenticated && !auth.isLoading) {
+      interval = setInterval(fetchUnread, 30000) // 30 seconds
+    }
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [auth.isAuthenticated, auth.isLoading])
+
+  useEffect(() => {
+    if (auth.isAuthenticated && !auth.isLoading) {
+      getUnreadCount().then(setUnreadCount)
+    }
+  }, [location.pathname, auth.isAuthenticated, auth.isLoading])
 
   const changeLanguage = (lang: string) => {
     localStorage.setItem('language', lang)
@@ -111,13 +149,29 @@ export default function Layout() {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
+            
+            {auth.isAuthenticated && profile?.role === 'PROVIDER' && (
+              <button
+                onClick={() => navigate('/services/new')}
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                title={t('common.createService') || 'Dienstleistung erstellen'}
+              >
+                <PlusCircle className="w-5 h-5 text-primary" />
+              </button>
+            )}
+
             {auth.isAuthenticated && auth.user ? (
               <button
                 onClick={() => navigate('/account')}
-                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                className="p-2 hover:bg-accent rounded-lg transition-colors relative"
                 title={auth.user.name || auth.user.email}
               >
                 <User className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 transform translate-x-1 -translate-y-1 bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] h-5 flex items-center justify-center border-2 border-background">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </button>
             ) : (
               <div className="hidden sm:flex items-center gap-2">
@@ -198,6 +252,16 @@ export default function Layout() {
                 </Link>
               )
             })}
+            
+            {auth.isAuthenticated && profile?.role === 'PROVIDER' && (
+              <Link
+                to="/services/new"
+                className={`block py-2.5 px-3 rounded-lg transition-all text-sm font-bold bg-primary text-primary-foreground mt-2 flex items-center justify-center gap-2`}
+                onClick={() => setMenuOpen(false)}
+              >
+                <PlusCircle className="w-5 h-5" />
+              </Link>
+            )}
             {!auth.isAuthenticated && (
               <div className="sm:hidden flex flex-col gap-2 pt-3 mt-2 border-t" style={{ borderColor: 'hsl(var(--border)/0.4)' }}>
                 <Button size="sm" onClick={handleLoginClick} className="w-full">

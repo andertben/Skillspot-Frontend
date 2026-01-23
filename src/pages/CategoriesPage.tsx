@@ -2,15 +2,19 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getCategories } from '@/api/categories'
 import type { Category } from '@/types/Category'
+import { useOptionalAuth } from '@/auth/useOptionalAuth'
 
 export default function CategoriesPage() {
   const { t } = useTranslation()
+  const auth = useOptionalAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCategories = async () => {
+      if (auth.isLoading) return
+
       try {
         setLoading(true)
         setError(null)
@@ -24,7 +28,7 @@ export default function CategoriesPage() {
     }
 
     fetchCategories()
-  }, [t])
+  }, [t, auth.isLoading])
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
@@ -45,7 +49,7 @@ export default function CategoriesPage() {
               <div>
                 <h2 className="text-xl font-semibold">{category.bezeichnung}</h2>
                 <p className="text-sm text-muted-foreground">{t('pages.categories.id')}: {category.kategorie_id}</p>
-                {category.oberkategorie_id > 0 && (
+                {category.oberkategorie_id !== null && category.oberkategorie_id > 0 && (
                   <p className="text-sm text-muted-foreground">{t('pages.categories.parentCategory')}: {category.oberkategorie_id}</p>
                 )}
               </div>

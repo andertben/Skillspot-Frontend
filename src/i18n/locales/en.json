@@ -94,7 +94,8 @@
     "login": "Login",
     "logout": "Logout",
     "signup": "Signup",
-    "inquiry": "Inquiry"
+    "inquiry": "Inquiry",
+    "back": "Back"
   },
   "map": {
     "center": "Center",

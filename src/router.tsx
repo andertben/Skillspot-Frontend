@@ -10,6 +10,7 @@ import ImpressumPage from '@/pages/ImpressumPage'
 import DatenschutzPage from '@/pages/DatenschutzPage'
 import KontaktPage from '@/pages/KontaktPage'
 import ChatPage from '@/pages/ChatPage'
+import ServiceFormPage from '@/pages/ServiceFormPage'
 import { ProtectedRoute } from '@/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
@@ -69,6 +70,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ChatPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/services/new',
+        element: (
+          <ProtectedRoute>
+            <ServiceFormPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/services/edit/:id',
+        element: (
+          <ProtectedRoute>
+            <ServiceFormPage />
           </ProtectedRoute>
         ),
       },

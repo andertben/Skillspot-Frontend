@@ -1,5 +1,5 @@
 import api from './client'
-import type { Message, Thread } from '@/types/Chat'
+import type { Message, Thread, ThreadSummary } from '@/types/Chat'
 
 export async function createThread(dienstleistungId: string): Promise<Thread> {
   try {
@@ -9,6 +9,34 @@ export async function createThread(dienstleistungId: string): Promise<Thread> {
   } catch (error) {
     console.error('[CHAT API] createThread failed:', error)
     throw error
+  }
+}
+
+export async function getMyThreads(): Promise<ThreadSummary[]> {
+  try {
+    const response = await api.get<ThreadSummary[]>('/chat/threads')
+    return response.data
+  } catch (error) {
+    console.error('[CHAT API] getMyThreads failed:', error)
+    throw error
+  }
+}
+
+export async function getUnreadCount(): Promise<number> {
+  try {
+    const response = await api.get<{ unreadCount: number }>('/chat/unread-count')
+    return response.data.unreadCount
+  } catch (error) {
+    console.error('[CHAT API] getUnreadCount failed:', error)
+    return 0
+  }
+}
+
+export async function markThreadRead(threadId: string): Promise<void> {
+  try {
+    await api.post(`/chat/threads/${threadId}/read`)
+  } catch (error) {
+    console.error('[CHAT API] markThreadRead failed:', error)
   }
 }
 

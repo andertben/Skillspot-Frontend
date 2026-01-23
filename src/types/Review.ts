@@ -1,10 +1,8 @@
 export interface Review {
-  anbieterId: number | null
-  dienstleistungId: number
-  bewertung: number | null
-  text?: string
-  erstellungsDatum?: string
-  bewertungId?: number
-  benutzerId?: number
-  buchungId?: number
+  id: number
+  serviceId: number
+  providerId: number
+  rating: number
+  comment: string
+  createdAt: string
 }

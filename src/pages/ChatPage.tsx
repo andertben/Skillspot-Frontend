@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Send, Loader2, ChevronLeft, AlertCircle } from 'lucide-react'
-import { getMessages, sendMessage, getThread } from '@/api/chat'
+import { getMessages, sendMessage, getThread, markThreadRead } from '@/api/chat'
 import type { Message } from '@/types/Chat'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { clsx, type ClassValue } from 'clsx'
@@ -62,6 +62,9 @@ export default function ChatPage() {
           providerName: thread.anbieterName,
           serviceTitle: thread.dienstleistungTitle
         })
+        
+        // Mark as read when opening
+        await markThreadRead(threadId)
       } catch (err) {
         console.error('Failed to fetch thread info:', err)
       }
