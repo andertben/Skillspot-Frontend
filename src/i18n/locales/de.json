@@ -58,7 +58,71 @@
     },
     "about": {
       "title": "Über uns",
-      "description": "Informationen über Skillspot"
+      "subtitle": "Skillspot, Finden Sie Dienstleistungen und Fähigkeiten in Ihrer Nähe",
+      "intro1": "Skillspot ist eine moderne Plattform aus Deutschland, die Menschen und Dienstleistungen einfach, transparent und lokal zusammenbringt. Unser Ziel ist es, die Suche nach passenden Anbietern so unkompliziert wie möglich zu gestalten und gleichzeitig lokalen Dienstleistern eine starke digitale Präsenz zu bieten.",
+      "intro2": "Egal ob Handwerker, IT-Service, Nachhilfe oder kreative Dienstleistungen: Skillspot macht Angebote sichtbar, vergleichbar und direkt erreichbar.",
+      "mission": {
+        "title": "Unsere Mission",
+        "subtitle": "Wir möchten lokale Dienstleistungen neu denken.",
+        "text": "Statt unübersichtlicher Anzeigenportale oder anonymer Plattformen setzen wir auf:",
+        "point1": "echte Nähe durch regionale Anbieter",
+        "point2": "transparente Informationen und Bewertungen",
+        "point3": "direkte Kommunikation zwischen Kunden und Dienstleistern",
+        "footer": "So entsteht Vertrauen, Effizienz und ein fairer Marktplatz für alle Beteiligten."
+      },
+      "special": {
+        "title": "Was Skillspot besonders macht",
+        "intro": "Im Vergleich zu klassischen Plattformen verfolgt Skillspot einen klaren Fokus:",
+        "point1": {
+          "title": "Starker Lokalbezug",
+          "text": "Dienstleistungen werden gezielt in Ihrer Umgebung angezeigt, inklusive Entfernung und Standort auf der Karte."
+        },
+        "point2": {
+          "title": "Direkte Kommunikation",
+          "text": "Kunden und Anbieter können ohne Umwege miteinander chatten, Angebote klären und Details besprechen."
+        },
+        "point3": {
+          "title": "Transparenz durch Bewertungen",
+          "text": "Echte Bewertungen und übersichtliche Profile schaffen Vertrauen und helfen bei der richtigen Entscheidung."
+        }
+      },
+      "audience": {
+        "title": "Für wen wir da sind",
+        "intro": "Skillspot richtet sich an:",
+        "point1": "Privatpersonen, die schnell Hilfe oder Dienstleistungen benötigen",
+        "point2": "Unternehmen, die zuverlässige lokale Partner suchen",
+        "point3": "Dienstleister und Handwerker, die neue Kunden gewinnen möchten",
+        "footer": "Der Fokus liegt bewusst auf regionaler Vernetzung, mit der Möglichkeit später auch überregional zu wachsen."
+      },
+      "who": {
+        "title": "Wer wir sind",
+        "intro": "Skillspot wurde von zwei Gründern entwickelt:",
+        "founder1": "Ben Andert",
+        "founder2": "Bennet Weiß",
+        "text": "Als kleines, engagiertes Team entwickeln wir Skillspot kontinuierlich weiter und hören dabei aktiv auf das Feedback unserer Nutzer."
+      },
+      "values": {
+        "title": "Unsere Werte",
+        "intro": "Unsere Arbeit basiert auf klaren Grundprinzipien:",
+        "point1": "Vertrauen durch Transparenz",
+        "point2": "Fairness gegenüber Kunden und Anbietern",
+        "point3": "Datenschutz und Sicherheit",
+        "point4": "Qualität statt Masse",
+        "point5": "Einfachheit in der Nutzung",
+        "footer": "Diese Werte prägen jede Entscheidung in der Weiterentwicklung der Plattform."
+      },
+      "vision": {
+        "title": "Unsere Vision",
+        "text1": "Wir glauben an eine Zukunft, in der lokale Dienstleistungen digital genauso sichtbar und zugänglich sind wie große Online-Angebote.",
+        "highlight": "Unsere Vision:",
+        "main": "Skillspot soll die zentrale Plattform für lokale Dienstleistungen in Deutschland werden und langfristig auch in weiteren Ländern Menschen miteinander verbinden.",
+        "footer": "Dabei möchten wir nicht nur vermitteln, sondern echte digitale Nachbarschaften schaffen."
+      },
+      "cta": {
+        "title": "Werden Sie Teil von Skillspot",
+        "subtitle": "Ob als Kunde oder als Anbieter:",
+        "text": "Entdecken Sie Skillspot und erleben Sie, wie einfach lokale Dienstleistungen heute funktionieren können."
+      }
     },
     "map": {
       "title": "Karte",
@@ -205,5 +269,167 @@
     "datenschutz": "Datenschutz",
     "projectHint": "Skillspot ist ein studentisches Projekt der TH Brandenburg.",
     "copyright": "© 2026 Skillspot. Alle Rechte vorbehalten."
+  },
+  "imprint": {
+    "title": "Impressum",
+    "section": {
+      "operator": {
+        "title": "Angaben gemäß § 5 TMG",
+        "content": "Skillspot\nBennet Weiß & Ben Andert\nTechnische Hochschule Brandenburg\nMagdeburger Straße 50\n14770 Brandenburg an der Havel\nDeutschland"
+      },
+      "contact": {
+        "title": "Kontakt",
+        "phoneLabel": "Telefon:",
+        "phoneValue": "+49 (0) 000 0000000",
+        "emailLabel": "E-Mail:",
+        "emailValue": "kontakt@skillspot.de"
+      },
+      "responsible": {
+        "title": "Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV",
+        "content": "Bennet Weiß\nBen Andert\nAdresse wie oben"
+      },
+      "disclaimer": {
+        "title": "Haftungsausschluss (Disclaimer)",
+        "content1": "Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich.",
+        "content2": "Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen.",
+        "content3": "Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt."
+      },
+      "links": {
+        "title": "Haftung für Links",
+        "content": "Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben."
+      },
+      "copyright": {
+        "title": "Urheberrecht",
+        "content": "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht."
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "content": "Informationen zum Datenschutz finden Sie in unserer separaten Datenschutzerklärung."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "intro": "Wir nehmen den Schutz Ihrer persönlichen Daten ernst. Diese Datenschutzerklärung informiert Sie darüber, welche personenbezogenen Daten wir erheben und wie wir sie verwenden, wenn Sie Skillspot nutzen.",
+    "section": {
+      "controller": {
+        "title": "1. Verantwortlicher",
+        "content": "Skillspot\nBennet Weiß & Ben Andert\nTechnische Hochschule Brandenburg\nMagdeburger Straße 50\n14770 Brandenburg an der Havel\nDeutschland\nE-Mail: kontakt@skillspot.de"
+      },
+      "dataTypes": {
+        "title": "2. Welche Daten wir verarbeiten",
+        "intro": "Je nach Nutzung der Plattform können folgende Daten verarbeitet werden:",
+        "item1": "Account-Daten: Name/Anzeigename, E-Mail-Adresse, Authentifizierungs-ID (z.B. Auth0 Sub).",
+        "item2": "Profil-Daten: Rolle (Nutzer/Anbieter), optional Adresse und Standortkoordinaten (Lat/Lon), sofern Sie als Anbieter auftreten.",
+        "item3": "Inhalts-Daten: von Ihnen erstellte Dienstleistungen (Titel, Beschreibung, Kategorie), Chat-Nachrichten, Bewertungen.",
+        "item4": "Technische Daten: IP-Adresse (kurzzeitig), Browser-/Geräteinformationen, Log-Daten, Zeitstempel."
+      },
+      "purposes": {
+        "title": "3. Zwecke der Verarbeitung",
+        "intro": "Wir verarbeiten Daten zu folgenden Zwecken:",
+        "item1": "Bereitstellung der Plattformfunktionen (Login, Profil, Kategorien, Dienstleistungen, Chat).",
+        "item2": "Standortbasierte Darstellung von Anbietern und Dienstleistungen in Ihrer Nähe (nur bei Anbieterprofil und sofern Standortdaten vorhanden sind).",
+        "item3": "Sicherheit, Fehleranalyse und Missbrauchsprävention.",
+        "item4": "Kommunikation mit Ihnen (Support-Anfragen)."
+      },
+      "legalBasis": {
+        "title": "4. Rechtsgrundlagen",
+        "intro": "Die Verarbeitung erfolgt je nach Kontext insbesondere auf folgenden Rechtsgrundlagen:",
+        "item1": "Art. 6 Abs. 1 lit. b DSGVO (Vertrag/vertragsähnliche Nutzung der Plattform).",
+        "item2": "Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse, z.B. IT-Sicherheit, Betrieb der Plattform).",
+        "item3": "Art. 6 Abs. 1 lit. a DSGVO (Einwilligung), sofern wir Sie um eine Einwilligung bitten."
+      },
+      "auth0": {
+        "title": "5. Authentifizierung (Auth0)",
+        "content1": "Für Anmeldung und Authentifizierung nutzen wir einen externen Authentifizierungsdienst (z.B. Auth0). Dabei werden zur Anmeldung erforderliche Daten verarbeitet, insbesondere Ihre E-Mail-Adresse und eine technische Benutzerkennung.",
+        "content2": "Wir erhalten von dem Dienst eine eindeutige Benutzer-ID (Subject), um Ihr Konto in Skillspot zuzuordnen. Passwörter werden von Skillspot nicht gespeichert."
+      },
+      "location": {
+        "title": "6. Standortdaten",
+        "content1": "Wenn Sie als Anbieter auftreten, können Sie eine Adresse angeben. Daraus können Standortkoordinaten (Lat/Lon) berechnet werden, um Ihren Standort auf der Karte anzuzeigen.",
+        "content2": "Die Standortangaben sind freiwillig, können aber erforderlich sein, damit die Kartenfunktion für Anbieter sinnvoll nutzbar ist."
+      },
+      "chat": {
+        "title": "7. Chat und Bewertungen",
+        "content1": "Wenn Sie den Chat nutzen, werden Nachrichteninhalte und Zeitstempel gespeichert, damit die Kommunikation zwischen Nutzern und Anbietern funktioniert.",
+        "content2": "Wenn Sie Bewertungen abgeben, werden Sternebewertung und Text zusammen mit der referenzierten Dienstleistung gespeichert und angezeigt."
+      },
+      "recipients": {
+        "title": "8. Empfänger und Weitergabe",
+        "intro": "Wir geben personenbezogene Daten grundsätzlich nicht an Dritte weiter, außer:",
+        "item1": "wenn dies zur Nutzung von Diensten erforderlich ist (z.B. Authentifizierung über Auth0),",
+        "item2": "wenn wir rechtlich dazu verpflichtet sind, oder",
+        "item3": "wenn Sie eingewilligt haben."
+      },
+      "storage": {
+        "title": "9. Speicherdauer",
+        "content": "Wir speichern personenbezogene Daten nur so lange, wie dies für die genannten Zwecke erforderlich ist oder gesetzliche Pflichten dies verlangen. Sie können Ihr Profil anpassen; auf Anfrage können wir Daten löschen, soweit keine Aufbewahrungspflichten entgegenstehen."
+      },
+      "rights": {
+        "title": "10. Ihre Rechte",
+        "intro": "Sie haben nach der DSGVO insbesondere folgende Rechte:",
+        "item1": "Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO).",
+        "item2": "Berichtigung unrichtiger Daten (Art. 16 DSGVO).",
+        "item3": "Löschung Ihrer Daten (Art. 17 DSGVO), soweit zulässig.",
+        "item4": "Einschränkung der Verarbeitung (Art. 18 DSGVO).",
+        "item5": "Datenübertragbarkeit (Art. 20 DSGVO), soweit anwendbar.",
+        "item6": "Widerspruch gegen Verarbeitung (Art. 21 DSGVO), soweit anwendbar.",
+        "contact": "Zur Ausübung Ihrer Rechte schreiben Sie uns an: kontakt@skillspot.de"
+      },
+      "security": {
+        "title": "11. Sicherheit",
+        "content": "Wir setzen angemessene technische und organisatorische Maßnahmen ein, um Ihre Daten zu schützen. Dennoch kann eine vollständige Sicherheit bei der Datenübertragung im Internet nicht garantiert werden."
+      },
+      "changes": {
+        "title": "12. Änderungen dieser Datenschutzerklärung",
+        "content": "Wir können diese Datenschutzerklärung aktualisieren, wenn sich Funktionen oder rechtliche Anforderungen ändern. Die jeweils aktuelle Version ist in der App verfügbar."
+      }
+    },
+    "meta": {
+      "lastUpdatedLabel": "Stand:",
+      "lastUpdatedValue": "24.01.2026"
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "intro": "Du hast Fragen zu Skillspot oder brauchst Hilfe? Schreib uns gerne. Wir melden uns so schnell wie möglich zurück.",
+    "section": {
+      "details": {
+        "title": "Kontaktinformationen",
+        "emailLabel": "E-Mail",
+        "emailValue": "kontakt@skillspot.de",
+        "addressLabel": "Adresse",
+        "addressValue": "Technische Hochschule Brandenburg\nMagdeburger Straße 50\n14770 Brandenburg an der Havel\nDeutschland"
+      },
+      "people": {
+        "title": "Ansprechpartner",
+        "intro": "Du kannst uns direkt kontaktieren:",
+        "person1": {
+          "name": "Bennet Weiß",
+          "role": "Projektteam Skillspot"
+        },
+        "person2": {
+          "name": "Ben Andert",
+          "role": "Projektteam Skillspot"
+        }
+      },
+      "support": {
+        "title": "Support & Feedback",
+        "text": "Wenn du einen Fehler gefunden hast oder Feedback geben möchtest, beschreibe bitte kurz, was passiert ist (inklusive Screenshot, wenn möglich) und welche Schritte du vorher gemacht hast."
+      },
+      "responseTime": {
+        "title": "Antwortzeit",
+        "text": "In der Regel antworten wir innerhalb von 1 bis 3 Werktagen."
+      },
+      "privacyHint": {
+        "title": "Datenschutz-Hinweis",
+        "text": "Wenn du uns per E-Mail kontaktierst, verarbeiten wir deine Angaben zur Bearbeitung der Anfrage. Mehr dazu findest du in unserer Datenschutzerklärung."
+      }
+    },
+    "actions": {
+      "mailButton": "E-Mail schreiben",
+      "copyEmail": "E-Mail kopieren",
+      "copied": "Kopiert"
+    }
   }
 }

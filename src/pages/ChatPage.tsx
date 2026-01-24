@@ -33,6 +33,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const isAutoScrollingRef = useRef(true)
+  const hasMarkedReadRef = useRef<string | null>(null)
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget
@@ -58,13 +59,10 @@ export default function ChatPage() {
         const thread = await getThread(threadId)
         console.log("getThread response (Header Data)", thread);
 
-        setThreadInfo({
-          providerName: thread.anbieterName,
-          serviceTitle: thread.dienstleistungTitle
-        })
-        
-        // Mark as read when opening
-        await markThreadRead(threadId)
+        setThreadInfo(prev => ({
+          providerName: thread.anbieterName || prev.providerName,
+          serviceTitle: thread.dienstleistungTitle || prev.serviceTitle
+        }))
       } catch (err) {
         console.error('Failed to fetch thread info:', err)
       }
@@ -86,6 +84,14 @@ export default function ChatPage() {
         return data
       })
       setError(null)
+
+      // Mark as read once per thread mount after messages are loaded
+      if (threadId && hasMarkedReadRef.current !== threadId) {
+        hasMarkedReadRef.current = threadId
+        markThreadRead(threadId).then(() => {
+          window.dispatchEvent(new CustomEvent('refresh-unread-count'))
+        })
+      }
     } catch (err: unknown) {
       console.error('Failed to fetch messages:', err)
       
@@ -224,25 +230,32 @@ export default function ChatPage() {
               <div 
                 key={msg.id} 
                 className={cn(
-                  "flex flex-col max-w-[80%]",
-                  isOwn ? "self-end items-end" : "self-start items-start"
+                  "w-full flex",
+                  isOwn ? "justify-end" : "justify-start"
                 )}
               >
                 <div 
                   className={cn(
-                    "px-4 py-2.5 rounded-2xl text-sm shadow-sm",
-                    isOwn 
-                      ? "bg-primary text-primary-foreground rounded-tr-none" 
-                      : "bg-secondary text-secondary-foreground rounded-tl-none"
+                    "flex flex-col max-w-[75%]",
+                    isOwn ? "items-end" : "items-start"
                   )}
                 >
-                  {msg.text}
+                  <div 
+                    className={cn(
+                      "px-4 py-2.5 rounded-2xl text-sm shadow-sm",
+                      isOwn 
+                        ? "bg-primary text-primary-foreground rounded-tr-none" 
+                        : "bg-secondary text-secondary-foreground rounded-tl-none"
+                    )}
+                  >
+                    {msg.text}
+                  </div>
+                  {isValidDate && (
+                    <span className="text-[10px] text-muted-foreground mt-1 px-1">
+                      {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
                 </div>
-                {isValidDate && (
-                  <span className="text-[10px] text-muted-foreground mt-1 px-1">
-                    {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                )}
               </div>
             )
           })

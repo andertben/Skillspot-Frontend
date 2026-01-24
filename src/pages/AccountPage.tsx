@@ -377,7 +377,12 @@ export default function AccountPage() {
                       <button
                         key={thread.threadId}
                         type="button"
-                        onClick={() => navigate(`/chat/${thread.threadId}`)}
+                        onClick={() => navigate(`/chat/${thread.threadId}`, {
+                          state: {
+                            serviceTitle: thread.dienstleistungTitle,
+                            providerName: thread.anbieterName
+                          }
+                        })}
                         className="w-full text-left p-4 rounded-xl border border-border/50 hover:bg-accent hover:border-primary/20 transition-all group relative"
                       >
                         <div className="flex justify-between items-start gap-4">

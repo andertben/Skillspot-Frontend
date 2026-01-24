@@ -41,12 +41,16 @@ export default function Layout() {
 
     fetchUnread()
     
+    const handleRefresh = () => fetchUnread()
+    window.addEventListener('refresh-unread-count', handleRefresh)
+    
     if (auth.isAuthenticated && !auth.isLoading) {
       interval = setInterval(fetchUnread, 30000) // 30 seconds
     }
 
     return () => {
       if (interval) clearInterval(interval)
+      window.removeEventListener('refresh-unread-count', handleRefresh)
     }
   }, [auth.isAuthenticated, auth.isLoading])
 
@@ -168,7 +172,7 @@ export default function Layout() {
               >
                 <User className="w-5 h-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-0 right-0 transform translate-x-1 -translate-y-1 bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] h-5 flex items-center justify-center border-2 border-background">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center shadow-sm border border-background">
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}
