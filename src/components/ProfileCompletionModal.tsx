@@ -6,6 +6,16 @@ import { Input } from '@/components/ui/input'
 // Local type to avoid runtime import issues if '@/types/User' does not export UserRole at runtime
 type UserRole = 'USER' | 'PROVIDER'
 import { MapPin, Loader2 } from 'lucide-react'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
+import { providerIcon } from '@/helpers/leafletIcons'
+
+// Helper component to update map view when coordinates change
+function MapRecenter({ center }: { center: [number, number] }) {
+  const map = useMap()
+  map.setView(center, 15)
+  return null
+}
 
 interface ProfileCompletionModalProps {
   isOpen: boolean
@@ -79,10 +89,10 @@ export function ProfileCompletionModal({ isOpen }: ProfileCompletionModalProps) 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 animate-in fade-in duration-300">
       {/* Darkened backdrop with blur */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
       
-      {/* Modal Container: Like a Skillspot Card */}
-      <div className="relative bg-card border border-border rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:max-w-[520px] overflow-y-auto animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+      {/* Modal Container: Solid White Background */}
+      <div className="relative bg-white dark:bg-card border border-border rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:max-w-[520px] overflow-y-auto animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
         <div className="p-8 sm:p-10 space-y-8">
           <div className="space-y-3 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
@@ -105,7 +115,7 @@ export function ProfileCompletionModal({ isOpen }: ProfileCompletionModalProps) 
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
                 disabled={loading}
-                className="h-12 bg-background/50 focus:bg-background transition-colors"
+                className="h-12 bg-background focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
@@ -115,7 +125,7 @@ export function ProfileCompletionModal({ isOpen }: ProfileCompletionModalProps) 
               </label>
               <select
                 id="role"
-                className="flex h-12 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:bg-background disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
                 required
@@ -142,41 +152,46 @@ export function ProfileCompletionModal({ isOpen }: ProfileCompletionModalProps) 
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     disabled={loading || isGeocoding}
-                    className="h-12 bg-background/50 focus:bg-background transition-colors flex-1"
+                    className="h-12 bg-background focus:ring-2 focus:ring-primary/20 transition-all flex-1"
                   />
                   <Button
                     type="button"
                     variant="secondary"
                     onClick={handleGeocode}
                     disabled={loading || isGeocoding || !address.trim()}
-                    className="h-12 px-4 shrink-0"
+                    className="h-12 px-4 shrink-0 shadow-sm"
                   >
                     {isGeocoding ? <Loader2 className="h-4 w-4 animate-spin" /> : t('auth.profile.takeAddress')}
                   </Button>
                 </div>
                 {locationLat && locationLon && (
-                  <p className="text-[10px] text-muted-foreground ml-1 flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    ✓ Koordinaten gefunden: {locationLat.toFixed(4)}, {locationLon.toFixed(4)}
-                  </p>
+                  <div className="space-y-2 animate-in fade-in zoom-in-95 duration-500">
+                    <p className="text-[10px] text-muted-foreground ml-1 flex items-center gap-1">
+                      <MapPin className="h-3 w-3 text-primary" />
+                      ✓ {t('auth.profile.locationFound')}: {locationLat.toFixed(4)}, {locationLon.toFixed(4)}
+                    </p>
+                    <div className="h-40 w-full rounded-lg border border-border overflow-hidden relative z-0">
+                      <MapContainer 
+                        center={[locationLat, locationLon]} 
+                        zoom={15} 
+                        style={{ height: '100%', width: '100%' }}
+                        zoomControl={false}
+                        scrollWheelZoom={false}
+                        dragging={false}
+                        doubleClickZoom={false}
+                        touchZoom={false}
+                      >
+                        <TileLayer
+                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <Marker position={[locationLat, locationLon]} icon={providerIcon} />
+                        <MapRecenter center={[locationLat, locationLon]} />
+                      </MapContainer>
+                      <div className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.1)]" />
+                    </div>
+                  </div>
                 )}
-              </div>
-            )}
-
-            {role !== 'PROVIDER' && (
-              <div className="space-y-2.5">
-                <label className="text-sm font-semibold text-foreground/90 ml-1 flex items-center gap-2">
-                  {t('auth.profile.location')} <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">(optional)</span>
-                </label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full h-12 justify-start gap-3 bg-background/50 hover:bg-accent/50 border-dashed"
-                  disabled={true}
-                >
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span className="text-sm">{t('auth.profile.useMyLocation')}</span>
-                </Button>
               </div>
             )}
 

@@ -137,6 +137,7 @@
       "roleProvider": "Anbieter",
       "address": "Adresse",
       "takeAddress": "Adresse übernehmen",
+      "locationFound": "Adresse gefunden",
       "geocodingError": "Adresse konnte nicht gefunden werden",
       "location": "Standort",
       "useMyLocation": "Meinen Standort verwenden",

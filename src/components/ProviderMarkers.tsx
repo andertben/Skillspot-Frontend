@@ -4,6 +4,7 @@ import { Marker, Popup } from 'react-leaflet'
 import { useTranslation } from 'react-i18next'
 import { getProviders } from '@/api/providers'
 import { getReviewsByProviderId, calculateAverageRating } from '@/api/reviews'
+import { useUserStore } from '@/hooks/useUserStore'
 import type { Provider } from '@/types/Provider'
 import type { Review } from '@/types/Review'
 import StarRating from './StarRating'
@@ -78,6 +79,7 @@ function ProviderPopupContent({ provider, simplePopup }: { provider: Provider, s
 
 export function ProviderMarkers({ simplePopup }: ProviderMarkersProps) {
   const [providers, setProviders] = useState<Provider[]>([])
+  const { profile } = useUserStore()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,7 +94,7 @@ export function ProviderMarkers({ simplePopup }: ProviderMarkersProps) {
     }
 
     fetchData()
-  }, [])
+  }, [profile?.profileComplete])
 
   return (
     <>

@@ -133,6 +133,7 @@
       "roleProvider": "Provider",
       "address": "Address",
       "takeAddress": "Use Address",
+      "locationFound": "Address found",
       "geocodingError": "Address could not be found",
       "location": "Location",
       "useMyLocation": "Use my location",
