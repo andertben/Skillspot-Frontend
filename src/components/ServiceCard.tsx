@@ -249,7 +249,7 @@ export default function ServiceCard({
         )}
 
         {isExpanded && (
-          <div className="mt-2 animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
+          <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200 space-y-4">
             {!isLoadingReviews && (
               <>
                 {reviews.length > 0 && <RatingBars reviews={reviews} />}
@@ -267,14 +267,14 @@ export default function ServiceCard({
                     >
                       <MessageSquare className="w-5 h-5" />
                       <span className="font-bold uppercase tracking-wider text-xs">
-                        {t('pages.services.writeReview') || 'Bewertung schreiben'}
+                        {t('pages.services.writeReview')}
                       </span>
                     </Button>
                   ) : (
                     <form 
                       onSubmit={handleSubmitReview}
                       onClick={(e) => e.stopPropagation()}
-                      className="bg-accent/5 p-5 rounded-2xl border border-primary/10 space-y-4 animate-in fade-in zoom-in-95 duration-200"
+                      className="bg-accent/5 p-5 rounded-2xl border border-primary/10 space-y-4 animate-in fade-in slide-in-from-top-1 duration-200"
                     >
                       <div className="flex justify-between items-center mb-1">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-primary/70">

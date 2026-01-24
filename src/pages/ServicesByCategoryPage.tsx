@@ -236,8 +236,8 @@ export default function ServicesByCategoryPage() {
                       cardRefs.current[service.dienstleistungId] = el
                     }}
                     onClick={() => handleSelectProvider(service.anbieterId, 'card', service.dienstleistungId)}
-                    className={`cursor-pointer transition-all duration-300 rounded-2xl ${
-                      isSelected ? 'ring-2 ring-primary shadow-xl scale-[1.01]' : ''
+                    className={`cursor-pointer transition-all duration-200 rounded-2xl ${
+                      isSelected ? 'ring-2 ring-primary shadow-2xl z-10' : 'hover:shadow-lg'
                     }`}
                   >
                     <ServiceCard 
