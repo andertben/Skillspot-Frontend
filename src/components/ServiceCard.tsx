@@ -278,7 +278,7 @@ export default function ServiceCard({
                     >
                       <div className="flex justify-between items-center mb-1">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-primary/70">
-                          {t('pages.services.writeReview') || 'Neue Bewertung'}
+                          {t('pages.services.newReview')}
                         </h4>
                         <button 
                           type="button" 
@@ -292,7 +292,7 @@ export default function ServiceCard({
                       <div className="grid grid-cols-1 gap-4">
                         <div className="flex flex-col gap-1.5">
                           <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight ml-1">
-                            {t('pages.services.rating') || 'Sterne'}
+                            {t('pages.services.stars')}
                           </label>
                           <select 
                             value={newRating} 
@@ -301,19 +301,19 @@ export default function ServiceCard({
                             disabled={isSubmittingReview}
                           >
                             {[5, 4, 3, 2, 1].map(n => (
-                              <option key={n} value={n}>{n} {n === 1 ? (t('pages.services.star') || 'Stern') : (t('pages.services.stars') || 'Sterne')}</option>
+                              <option key={n} value={n}>{n} {n === 1 ? t('pages.services.star') : t('pages.services.stars')}</option>
                             ))}
                           </select>
                         </div>
                         
                         <div className="flex flex-col gap-1.5">
                           <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight ml-1">
-                            {t('pages.services.comment') || 'Ihr Kommentar'}
+                            {t('pages.services.yourComment')}
                           </label>
                           <textarea
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
-                            placeholder={t('pages.services.reviewPlaceholder') || 'Wie war Ihre Erfahrung?'}
+                            placeholder={t('pages.services.reviewPlaceholder')}
                             className="bg-background border border-border rounded-xl px-4 py-3 text-sm min-h-[100px] w-full resize-none outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                             disabled={isSubmittingReview}
                           />
@@ -341,7 +341,7 @@ export default function ServiceCard({
                           ) : (
                             <Send className="w-4 h-4" />
                           )}
-                          {t('common.save') || 'Bewertung senden'}
+                          {t('pages.services.sendReview')}
                         </Button>
                         <Button
                           type="button"
@@ -351,7 +351,7 @@ export default function ServiceCard({
                           disabled={isSubmittingReview}
                           className="px-4 h-11 rounded-xl font-semibold text-muted-foreground hover:text-foreground"
                         >
-                          {t('common.cancel') || 'Abbrechen'}
+                          {t('common.cancel')}
                         </Button>
                       </div>
                     </form>
