@@ -22,6 +22,7 @@ export default function ServiceFormPage() {
   const [selectedUnterkategorie, setSelectedUnterkategorie] = useState<string>('')
   const [title, setTitle] = useState('')
   const [beschreibung, setBeschreibung] = useState('')
+  const [preis, setPreis] = useState<string>('')
   
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,16 +41,15 @@ export default function ServiceFormPage() {
           const service = await getServiceById(Number(id))
           setTitle(service.title)
           setBeschreibung(service.beschreibung || '')
+          setPreis(service.preis ? String(service.preis) : '')
           setSelectedUnterkategorie(String(service.kategorieId))
           
-          // Find the parent category for the selected subcategory
-          // Works for both tree structure (children) and flat list (oberkategorie_id)
+          // Find the parent category for the selected subcategory in the tree
           const parent = categoriesData.find(cat => 
-            cat.children?.some(child => child.kategorie_id === service.kategorieId) ||
-            (cat.kategorie_id === categoriesData.find(c => c.kategorie_id === service.kategorieId)?.oberkategorie_id)
+            cat.children?.some(child => child.id === service.kategorieId)
           )
           if (parent) {
-            setSelectedOberkategorie(String(parent.kategorie_id))
+            setSelectedOberkategorie(String(parent.id))
           }
         }
       } catch (err) {
@@ -62,22 +62,11 @@ export default function ServiceFormPage() {
     loadData()
   }, [id, isEditMode, t, auth.isAuthenticated, auth.isLoading])
 
-  const topCategories = categories.filter(
-    c => !c.oberkategorie_id || c.oberkategorie_id === 0
-  )
+  const topCategories = categories
 
-  const subCategories = categories.filter(c => {
-    if (selectedOberkategorie) {
-      // If it's a tree structure
-      const parent = categories.find(p => String(p.kategorie_id) === selectedOberkategorie)
-      if (parent?.children && parent.children.length > 0) {
-        return parent.children.some(child => child.kategorie_id === c.kategorie_id)
-      }
-      // If it's a flat structure
-      return String(c.oberkategorie_id) === selectedOberkategorie
-    }
-    return false
-  })
+  const subCategories = categories.find(
+    cat => String(cat.id) === selectedOberkategorie
+  )?.children || []
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,7 +87,8 @@ export default function ServiceFormPage() {
       const payload = {
         kategorieId: Number(selectedUnterkategorie),
         title: title.trim(),
-        beschreibung: beschreibung.trim() || undefined
+        beschreibung: beschreibung.trim() || undefined,
+        preis: preis ? Number(preis) : undefined
       }
 
       if (isEditMode) {
@@ -111,9 +101,30 @@ export default function ServiceFormPage() {
       setTimeout(() => {
         navigate('/account')
       }, 2000)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to save service:', err)
-      setError(t('common.error') || 'Ein Fehler ist aufgetreten.')
+      
+      // Handle backend validation errors (400)
+      if (err.response?.status === 400 && err.response?.data) {
+        const backendError = err.response.data
+        if (typeof backendError === 'string') {
+          setError(backendError)
+        } else if (backendError.message) {
+          setError(backendError.message)
+        } else if (typeof backendError === 'object') {
+          // If it's a field-level error map
+          const messages = Object.entries(backendError)
+            .map(([field, msg]) => `${field}: ${msg}`)
+            .join(', ')
+          setError(messages || 'Ungültige Eingabedaten.')
+        } else {
+          setError('Validierungsfehler vom Server.')
+        }
+      } else if (err.response?.status === 401 || err.response?.status === 403) {
+        setError('Keine Berechtigung zum Speichern. Bitte melden Sie sich erneut an.')
+      } else {
+        setError(t('common.error') || 'Ein Fehler ist aufgetreten.')
+      }
     } finally {
       setIsSaving(false)
     }
@@ -173,8 +184,8 @@ export default function ServiceFormPage() {
               >
                 <option value="">Wählen...</option>
                 {topCategories.map(cat => (
-                  <option key={cat.kategorie_id} value={cat.kategorie_id}>
-                    {cat.bezeichnung}
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
@@ -191,8 +202,8 @@ export default function ServiceFormPage() {
               >
                 <option value="">Wählen...</option>
                 {subCategories.map(sub => (
-                  <option key={sub.kategorie_id} value={sub.kategorie_id}>
-                    {sub.bezeichnung}
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name}
                   </option>
                 ))}
               </select>
@@ -207,6 +218,19 @@ export default function ServiceFormPage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="z.B. Reparatur von Elektrogeräten"
               required
+              disabled={isSaving}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="preis" className="text-sm font-medium text-muted-foreground">Preis (€, optional)</label>
+            <Input
+              id="preis"
+              type="number"
+              step="0.01"
+              value={preis}
+              onChange={(e) => setPreis(e.target.value)}
+              placeholder="z.B. 49.99"
               disabled={isSaving}
             />
           </div>

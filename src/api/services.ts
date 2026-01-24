@@ -54,7 +54,7 @@ export async function getServiceById(id: number): Promise<Service> {
 
 export async function getMyServices(): Promise<Service[]> {
   try {
-    const response = await api.get<Service[]>('/dienstleistungen/me')
+    const response = await api.get<Service[]>('/dienstleistungen/my')
     return response.data
   } catch (error) {
     console.error('[SERVICES API] getMyServices failed:', error)
