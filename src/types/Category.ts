@@ -5,8 +5,10 @@ export interface Category {
   parentId?: number | null
   children?: Category[]
   
-  // Keep old fields for compatibility with other pages until they are updated
+  // Keep old fields for compatibility with older components during transition
   kategorie_id?: number
   bezeichnung?: string
   oberkategorie_id?: number | null
 }
+
+export type { NormalizedCategory } from '@/helpers/categoryNormalize'

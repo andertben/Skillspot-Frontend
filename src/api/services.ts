@@ -1,6 +1,13 @@
 import api from './client'
-import type { Category } from '@/types/Category'
+import type { Category, NormalizedCategory } from '@/types/Category'
 import type { Service } from '@/types/Service'
+import i18n from '@/i18n/i18n'
+import { normalizeCategories } from '@/helpers/categoryNormalize'
+
+function getLanguage(): 'de' | 'en' {
+  const lang = (i18n.language || 'de').slice(0, 2)
+  return lang === 'en' ? 'en' : 'de'
+}
 
 export interface CreateServicePayload {
   kategorieId: number
@@ -9,10 +16,20 @@ export interface CreateServicePayload {
   preis?: number
 }
 
-export async function fetchKategorieTree(): Promise<Category[]> {
+export async function fetchKategorieTree(): Promise<NormalizedCategory[]> {
   try {
-    const response = await api.get<Category[]>('/kategorien/tree')
-    return response.data
+    const lang = getLanguage()
+    const response = await api.get<Category[]>('/kategorien/tree', {
+      params: { lang }
+    })
+    
+    const normalized = normalizeCategories(response.data)
+    
+    if (import.meta.env.DEV) {
+      console.debug(`[API] GET /kategorien/tree?lang=${lang} → ${normalized.length} root categories (First: ${normalized[0]?.name})`)
+    }
+    
+    return normalized
   } catch (error) {
     console.error('[SERVICES API] fetchKategorieTree failed:', error)
     throw error

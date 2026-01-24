@@ -32,7 +32,7 @@ function MapController({ center, zoom }: { center: [number, number]; zoom?: numb
 
 export default function ServicesByCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { location: userLocation } = useUserLocation()
   
   const auth = useOptionalAuth()
@@ -76,7 +76,7 @@ export default function ServicesByCategoryPage() {
       }
     }
     fetchData()
-  }, [categoryId, t, auth.isLoading])
+  }, [categoryId, t, auth.isLoading, i18n.language])
 
   const providersById = useMemo(() => {
     const map: Record<number, Provider> = {}

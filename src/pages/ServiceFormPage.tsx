@@ -4,19 +4,19 @@ import { useTranslation } from 'react-i18next'
 import { isAxiosError } from 'axios'
 import { Loader2, Save, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { fetchKategorieTree, createDienstleistung, getServiceById, updateDienstleistung } from '@/api/services'
-import type { Category } from '@/types/Category'
+import type { NormalizedCategory } from '@/types/Category'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 
 export default function ServiceFormPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEditMode = !!id
   const auth = useOptionalAuth()
 
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<NormalizedCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   
   const [selectedOberkategorie, setSelectedOberkategorie] = useState<string>('')
@@ -59,7 +59,7 @@ export default function ServiceFormPage() {
       }
     }
     loadData()
-  }, [id, isEditMode, t, auth.isAuthenticated, auth.isLoading])
+  }, [id, isEditMode, t, auth.isAuthenticated, auth.isLoading, i18n.language])
 
   const topCategories = categories
 

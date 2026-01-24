@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getCategories, getSubCategories } from '@/api/categories'
-import type { Category } from '@/types/Category'
+import type { NormalizedCategory } from '@/types/Category'
 import { WeatherWidget } from '@/components/WeatherWidget'
 
 const CATEGORY_COLORS = [
@@ -17,11 +17,11 @@ const CATEGORY_COLORS = [
 ]
 
 export default function ServicesPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [subcategories, setSubcategories] = useState<Category[]>([])
-  const [topCategory, setTopCategory] = useState<Category | null>(null)
+  const [subcategories, setSubcategories] = useState<NormalizedCategory[]>([])
+  const [topCategory, setTopCategory] = useState<NormalizedCategory | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
@@ -30,10 +30,11 @@ export default function ServicesPage() {
   const topCategoryId = searchParams.get('top') ? parseInt(searchParams.get('top')!) : null
 
   const isGardening = 
-    topCategory?.bezeichnung.toLowerCase() === 'gartenarbeiten'
+    topCategory?.name.toLowerCase() === 'gartenarbeiten' || 
+    topCategory?.name.toLowerCase() === 'gardening'
 
   const filteredSubcategories = subcategories.filter((category) =>
-    category.bezeichnung.toLowerCase().startsWith(searchText.toLowerCase())
+    category.name.toLowerCase().startsWith(searchText.toLowerCase())
   )
 
   useEffect(() => {
@@ -44,13 +45,13 @@ export default function ServicesPage() {
 
         const categories = await getCategories()
 
-        const allSubcategories = categories.filter((c) => c.oberkategorie_id && c.oberkategorie_id !== 0)
+        const allSubcategories = categories.filter((c) => c.parentId && c.parentId !== 0)
 
         if (topCategoryId) {
           const filtered = getSubCategories(categories, topCategoryId)
           setSubcategories(filtered)
           
-          const foundTop = categories.find(c => c.kategorie_id === topCategoryId)
+          const foundTop = categories.find(c => c.id === topCategoryId)
           setTopCategory(foundTop || null)
 
           if (import.meta.env.DEV) {
@@ -74,7 +75,7 @@ export default function ServicesPage() {
     }
 
     fetchCategories()
-  }, [topCategoryId, t, retryCount])
+  }, [topCategoryId, t, i18n.language, retryCount])
 
   const handleRetry = () => {
     setRetryCount((prev) => prev + 1)
@@ -91,7 +92,7 @@ export default function ServicesPage() {
           <div>
             <h1 className="text-4xl font-bold mb-2">{t('pages.services.title')}</h1>
             {topCategory && (
-              <p className="text-lg text-muted-foreground">{topCategory.bezeichnung}</p>
+              <p className="text-lg text-muted-foreground">{topCategory.name}</p>
             )}
           </div>
           
@@ -142,19 +143,19 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredSubcategories.map((category) => (
                 <div
-                  key={category.kategorie_id}
-                  onClick={() => navigate(`/services/category/${category.kategorie_id}`)}
+                  key={category.id}
+                  onClick={() => navigate(`/services/category/${category.id}`)}
                   className="rounded-lg border overflow-hidden hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
                   style={{ borderColor: 'hsl(var(--border))' }}
                 >
                   <div
-                    className={`${getColorForCategory(category.kategorie_id)} w-full h-40 flex items-center justify-center rounded-t-lg`}
+                    className={`${getColorForCategory(category.id)} w-full h-40 flex items-center justify-center rounded-t-lg`}
                   >
                     <p className="text-sm font-medium text-gray-600">{t('pages.services.noImage')}</p>
                   </div>
 
                   <div className="p-4 flex flex-col flex-grow">
-                    <h3 className="text-lg font-semibold mb-4 line-clamp-2">{category.bezeichnung}</h3>
+                    <h3 className="text-lg font-semibold mb-4 line-clamp-2">{category.name}</h3>
                   </div>
                 </div>
               ))}

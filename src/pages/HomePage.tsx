@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getCategories, getTopLevelCategories, getSubCategories } from '@/api/categories'
-import type { Category } from '@/types/Category'
+import type { NormalizedCategory } from '@/types/Category'
 import { ChevronRight } from 'lucide-react'
 import { WeatherWidget } from '@/components/WeatherWidget'
 
@@ -16,9 +16,9 @@ const CATEGORY_COLORS = [
 ]
 
 export default function HomePage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<NormalizedCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -37,7 +37,7 @@ export default function HomePage() {
     }
 
     fetchCategories()
-  }, [t])
+  }, [t, i18n.language])
 
   const topCategories = getTopLevelCategories(categories)
 
@@ -70,18 +70,20 @@ export default function HomePage() {
       {error && <p className="text-destructive">{error}</p>}
 
       {!loading && !error && topCategories.length === 0 && (
-        <p className="text-muted-foreground">{t('pages.home.noCategories')}</p>
+        <div className="text-center py-12 bg-muted/10 rounded-xl border border-dashed">
+          <p className="text-muted-foreground">{t('pages.home.noCategories')}</p>
+        </div>
       )}
 
       {!loading && !error && topCategories.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {topCategories.map((category, index) => {
             const colors = getColorForCategory(index)
-            const subcategoryCount = getSubcategoryCount(category.kategorie_id)
+            const subcategoryCount = getSubcategoryCount(category.id)
             return (
               <button
-                key={category.kategorie_id}
-                onClick={() => handleCategoryClick(category.kategorie_id)}
+                key={category.id}
+                onClick={() => handleCategoryClick(category.id)}
                 className="rounded-xl overflow-hidden border hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
                 style={{ borderColor: 'hsl(var(--border))' }}
               >
@@ -90,7 +92,7 @@ export default function HomePage() {
                 >
                   <div>
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                      {category.bezeichnung}
+                      {category.name}
                     </h2>
                     <p className="text-gray-600">
                       {subcategoryCount} {t('pages.home.services')}
