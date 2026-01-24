@@ -76,7 +76,7 @@ export default function AccountPage() {
         setServicesError(null)
       } catch (err) {
         console.error('Failed to fetch services:', err)
-        setServicesError('Fehler beim Laden der Dienstleistungen')
+        setServicesError(t('pages.account.loadServicesError'))
       } finally {
         setIsServicesLoading(false)
       }
@@ -85,10 +85,10 @@ export default function AccountPage() {
     if (auth.isAuthenticated && role === 'PROVIDER') {
       fetchServices()
     }
-  }, [auth.isAuthenticated, role])
+  }, [auth.isAuthenticated, role, t])
 
   const handleDeleteService = async (id: number) => {
-    if (!window.confirm('Möchten Sie diese Dienstleistung wirklich löschen?')) return
+    if (!window.confirm(t('pages.account.deleteConfirm'))) return
 
     try {
       setDeletingServiceId(id)
@@ -97,14 +97,14 @@ export default function AccountPage() {
     } catch (err) {
       console.error('Failed to delete service:', err)
       
-      let message = 'Fehler beim Löschen der Dienstleistung'
+      let message = t('pages.account.deleteError')
       if (isAxiosError(err) && err.response) {
         if (err.response.status === 401) {
-          message = 'Nutzer nicht eingeloggt.'
+          message = t('pages.account.deleteError401')
         } else if (err.response.status === 403) {
-          message = 'Du kannst nur deine eigenen Dienstleistungen löschen.'
+          message = t('pages.account.deleteError403')
         } else if (err.response.status === 404) {
-          message = 'Dienstleistung nicht mehr vorhanden.'
+          message = t('pages.account.deleteError404')
         }
       }
       alert(message)
@@ -184,7 +184,7 @@ export default function AccountPage() {
     }
 
     if (effectiveRole === 'PROVIDER' && (locationLat === null || locationLon === null)) {
-      setLocalError("Bitte bestätigen Sie die Adresse mit dem Button 'Adresse übernehmen', um die Standortdaten zu generieren.")
+      setLocalError(t('pages.account.confirmAddressNotice'))
       return
     }
 
@@ -206,7 +206,7 @@ export default function AccountPage() {
   const formatDate = (dateString?: string) => {
     if (!dateString) return '-'
     try {
-      return new Date(dateString).toLocaleString('de-DE')
+      return new Date(dateString).toLocaleString(t('locale'))
     } catch {
       return '-'
     }
@@ -261,19 +261,19 @@ export default function AccountPage() {
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     disabled={loading}
-                    placeholder="Anzeigename"
+                    placeholder={t('pages.account.name')}
                   />
                 </div>
 
                 <div className="grid gap-2">
                   <label className="text-sm font-medium text-muted-foreground">
-                    Rolle
+                    {t('pages.account.roleLabel')}
                   </label>
                   <p className="text-base font-medium px-3 py-2 bg-muted/30 rounded-md border border-border/50">
                     {role === 'PROVIDER' ? t('auth.profile.roleProvider') : t('auth.profile.roleUser')}
                   </p>
                   <p className="text-[10px] text-muted-foreground ml-1 italic">
-                    Die Rolle kann nach der Registrierung nicht mehr geändert werden.
+                    {t('pages.account.roleChangeNotice')}
                   </p>
                 </div>
 
@@ -292,7 +292,7 @@ export default function AccountPage() {
                           setLocationLon(null)
                         }}
                         disabled={loading || isGeocoding}
-                        placeholder="Musterstraße 1, 12345 Berlin"
+                        placeholder={t('pages.account.addressPlaceholder')}
                         required
                         className="flex-1"
                       />
@@ -333,7 +333,7 @@ export default function AccountPage() {
 
                 {saveSuccess && (
                   <div className="p-3 rounded-md bg-green-500/10 border border-green-500/20 text-green-600 text-sm font-medium">
-                    {t('auth.profile.saveSuccess', 'Profil erfolgreich gespeichert!')}
+                    {t('auth.profile.saveSuccess')}
                   </div>
                 )}
 
@@ -355,7 +355,7 @@ export default function AccountPage() {
             <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
               <h3 className="text-xl font-semibold mb-6 flex items-center gap-2 border-b pb-4">
                 <MessageSquare className="w-5 h-5 text-primary" />
-                {t('pages.chat.title') || 'Meine Chats'}
+                {t('pages.chat.title')}
               </h3>
               
               <div className="space-y-4">
@@ -369,7 +369,7 @@ export default function AccountPage() {
                   </p>
                 ) : threads.length === 0 ? (
                   <p className="text-center py-8 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
-                    {t('pages.chat.noMessages') || 'Keine aktiven Chats vorhanden'}
+                    {t('pages.chat.noMessages')}
                   </p>
                 ) : (
                   <div className="grid gap-3">
@@ -402,7 +402,7 @@ export default function AccountPage() {
                             ) : null}
                             {thread.lastMessageAt && (
                               <span className="text-[10px] text-muted-foreground tabular-nums">
-                                {new Date(thread.lastMessageAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
+                                {new Date(thread.lastMessageAt).toLocaleDateString(t('locale'), { day: '2-digit', month: '2-digit' })}
                               </span>
                             )}
                           </div>
@@ -419,7 +419,7 @@ export default function AccountPage() {
                 <div className="flex justify-between items-center mb-6 border-b pb-4">
                   <h3 className="text-xl font-semibold flex items-center gap-2">
                     <PlusCircle className="w-5 h-5 text-primary" />
-                    Meine Dienstleistungen
+                    {t('pages.account.servicesTitle')}
                   </h3>
                   <Button 
                     type="button" 
@@ -429,7 +429,7 @@ export default function AccountPage() {
                     className="flex items-center gap-2"
                   >
                     <PlusCircle className="w-4 h-4" />
-                    Neu erstellen
+                    {t('pages.serviceForm.titleCreate')}
                   </Button>
                 </div>
                 
@@ -444,9 +444,9 @@ export default function AccountPage() {
                     </p>
                   ) : myServices.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
-                      <p className="mb-4">Sie haben noch keine Dienstleistungen erstellt.</p>
+                      <p className="mb-4">{t('pages.account.noServices')}</p>
                       <Button onClick={() => navigate('/services/new')} variant="secondary">
-                        Erste Dienstleistung erstellen
+                        {t('pages.account.createFirstService')}
                       </Button>
                     </div>
                   ) : (
@@ -461,7 +461,7 @@ export default function AccountPage() {
                               {service.title}
                             </h4>
                             <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                              {service.beschreibung || 'Keine Beschreibung'}
+                              {service.beschreibung || t('pages.account.noDescription')}
                             </p>
                           </div>
                           <div className="flex items-center gap-2 ml-4">
@@ -469,7 +469,7 @@ export default function AccountPage() {
                               type="button"
                               onClick={() => navigate(`/services/edit/${service.dienstleistungId}`)}
                               className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                              title="Bearbeiten"
+                              title={t('common.edit')}
                             >
                               <Edit className="w-5 h-5" />
                             </button>
@@ -478,7 +478,7 @@ export default function AccountPage() {
                               onClick={() => handleDeleteService(service.dienstleistungId)}
                               disabled={deletingServiceId === service.dienstleistungId}
                               className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors disabled:opacity-50"
-                              title="Löschen"
+                              title={t('common.delete')}
                             >
                               {deletingServiceId === service.dienstleistungId ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />

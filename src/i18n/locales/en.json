@@ -83,7 +83,21 @@
       "noOrders": "No orders yet.",
       "accountDetails": "Account Details",
       "createdAt": "Account created",
-      "updatedAt": "Last updated"
+      "updatedAt": "Last updated",
+      "servicesTitle": "My Services",
+      "loadServicesError": "Error loading services",
+      "deleteConfirm": "Are you sure you want to delete this service?",
+      "deleteError": "Error deleting service",
+      "deleteError401": "User not logged in.",
+      "deleteError403": "You can only delete your own services.",
+      "deleteError404": "Service no longer exists.",
+      "roleLabel": "Role",
+      "roleChangeNotice": "The role cannot be changed after registration.",
+      "addressPlaceholder": "Example St 1, 12345 Berlin",
+      "confirmAddressNotice": "Please confirm the address with the 'Use Address' button to generate location data.",
+      "noServices": "You haven't created any services yet.",
+      "createFirstService": "Create first service",
+      "noDescription": "No description"
     },
     "chat": {
       "title": "Chat",
@@ -96,6 +110,24 @@
       "sendError": "Error sending message",
       "pleaseLogin": "Please log in",
       "loginRequired": "You must be logged in to participate in the chat."
+    },
+    "serviceForm": {
+      "titleCreate": "Create New Service",
+      "titleEdit": "Edit Service",
+      "successTitle": "Successfully saved!",
+      "successMessage": "Your service has been saved. Redirecting to profile...",
+      "oberkategorie": "Main Category",
+      "unterkategorie": "Sub Category",
+      "select": "Select...",
+      "title": "Title",
+      "titlePlaceholder": "e.g., Repair of electrical appliances",
+      "beschreibung": "Description",
+      "beschreibungPlaceholder": "Describe your service in more detail...",
+      "optional": "(optional)",
+      "errorCategory": "Please select a subcategory.",
+      "errorTitle": "Please provide a title.",
+      "errorUnauthorized": "No permission to save. Please log in again.",
+      "errorValidation": "Invalid input data."
     }
   },
   "locale": "en-US",
@@ -106,6 +138,10 @@
     "logout": "Logout",
     "signup": "Signup",
     "inquiry": "Inquiry",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
     "back": "Back"
   },
   "map": {

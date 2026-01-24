@@ -1,9 +1,29 @@
 import api from './client'
 import type { Review } from '@/types/Review'
 
+interface RawReview {
+  id?: number | string
+  bewertungId?: number | string
+  bewertung_id?: number | string
+  dienstleistungId?: number | string
+  dienstleistung_id?: number | string
+  serviceId?: number | string
+  service_id?: number | string
+  anbieterId?: number | string
+  anbieter_id?: number | string
+  providerId?: number | string
+  provider_id?: number | string
+  rating?: number | string
+  bewertung?: number | string
+  comment?: string
+  text?: string
+  createdAt?: string
+  datum?: string
+}
+
 export async function getReviewsByServiceId(serviceId: number | string): Promise<Review[]> {
   try {
-    const response = await api.get<any[]>(`/api/reviews/service/${serviceId}`)
+    const response = await api.get<RawReview[]>(`/api/reviews/service/${serviceId}`)
     const normalized = response.data.map(raw => {
       const normalizedReview: Review = {
         id: Number(raw.id || raw.bewertungId || raw.bewertung_id),

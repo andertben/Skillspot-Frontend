@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { isAxiosError } from 'axios'
 import { Loader2, Save, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { fetchKategorieTree, createDienstleistung, getServiceById, updateDienstleistung } from '@/api/services'
 import type { Category } from '@/types/Category'
@@ -22,7 +23,6 @@ export default function ServiceFormPage() {
   const [selectedUnterkategorie, setSelectedUnterkategorie] = useState<string>('')
   const [title, setTitle] = useState('')
   const [beschreibung, setBeschreibung] = useState('')
-  const [preis, setPreis] = useState<string>('')
   
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,7 +41,6 @@ export default function ServiceFormPage() {
           const service = await getServiceById(Number(id))
           setTitle(service.title)
           setBeschreibung(service.beschreibung || '')
-          setPreis(service.preis ? String(service.preis) : '')
           setSelectedUnterkategorie(String(service.kategorieId))
           
           // Find the parent category for the selected subcategory in the tree
@@ -73,12 +72,12 @@ export default function ServiceFormPage() {
     setError(null)
     
     if (!selectedUnterkategorie) {
-      setError('Bitte wählen Sie eine Unterkategorie aus.')
+      setError(t('pages.serviceForm.errorCategory'))
       return
     }
     
     if (!title.trim()) {
-      setError('Bitte geben Sie einen Titel an.')
+      setError(t('pages.serviceForm.errorTitle'))
       return
     }
 
@@ -87,8 +86,7 @@ export default function ServiceFormPage() {
       const payload = {
         kategorieId: Number(selectedUnterkategorie),
         title: title.trim(),
-        beschreibung: beschreibung.trim() || undefined,
-        preis: preis ? Number(preis) : undefined
+        beschreibung: beschreibung.trim() || undefined
       }
 
       if (isEditMode) {
@@ -101,29 +99,33 @@ export default function ServiceFormPage() {
       setTimeout(() => {
         navigate('/account')
       }, 2000)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to save service:', err)
       
       // Handle backend validation errors (400)
-      if (err.response?.status === 400 && err.response?.data) {
-        const backendError = err.response.data
-        if (typeof backendError === 'string') {
-          setError(backendError)
-        } else if (backendError.message) {
-          setError(backendError.message)
-        } else if (typeof backendError === 'object') {
-          // If it's a field-level error map
-          const messages = Object.entries(backendError)
-            .map(([field, msg]) => `${field}: ${msg}`)
-            .join(', ')
-          setError(messages || 'Ungültige Eingabedaten.')
+      if (isAxiosError(err)) {
+        if (err.response?.status === 400 && err.response?.data) {
+          const backendError = err.response.data
+          if (typeof backendError === 'string') {
+            setError(backendError)
+          } else if (backendError.message) {
+            setError(backendError.message)
+          } else if (typeof backendError === 'object') {
+            // If it's a field-level error map
+            const messages = Object.entries(backendError)
+              .map(([field, msg]) => `${field}: ${msg}`)
+              .join(', ')
+            setError(messages || t('pages.serviceForm.errorValidation'))
+          } else {
+            setError(t('pages.serviceForm.errorValidation'))
+          }
+        } else if (err.response?.status === 401 || err.response?.status === 403) {
+          setError(t('pages.serviceForm.errorUnauthorized'))
         } else {
-          setError('Validierungsfehler vom Server.')
+          setError(t('common.error'))
         }
-      } else if (err.response?.status === 401 || err.response?.status === 403) {
-        setError('Keine Berechtigung zum Speichern. Bitte melden Sie sich erneut an.')
       } else {
-        setError(t('common.error') || 'Ein Fehler ist aufgetreten.')
+        setError(t('common.error'))
       }
     } finally {
       setIsSaving(false)
@@ -134,7 +136,7 @@ export default function ServiceFormPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Lade Daten...</p>
+        <p className="text-muted-foreground">{t('common.loading')}</p>
       </div>
     )
   }
@@ -150,15 +152,15 @@ export default function ServiceFormPage() {
       </button>
 
       <h1 className="text-3xl font-bold mb-8">
-        {isEditMode ? 'Dienstleistung bearbeiten' : 'Neue Dienstleistung erstellen'}
+        {isEditMode ? t('pages.serviceForm.titleEdit') : t('pages.serviceForm.titleCreate')}
       </h1>
 
       {success ? (
         <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-8 text-center animate-in fade-in zoom-in duration-300">
           <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-green-600 mb-2">Erfolgreich gespeichert!</h2>
+          <h2 className="text-xl font-bold text-green-600 mb-2">{t('pages.serviceForm.successTitle')}</h2>
           <p className="text-muted-foreground">
-            Ihre Dienstleistung wurde gespeichert. Sie werden zum Profil weitergeleitet...
+            {t('pages.serviceForm.successMessage')}
           </p>
         </div>
       ) : (
@@ -172,7 +174,7 @@ export default function ServiceFormPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">Oberkategorie</label>
+              <label className="text-sm font-medium text-muted-foreground">{t('pages.serviceForm.oberkategorie')}</label>
               <select
                 value={selectedOberkategorie}
                 onChange={(e) => {
@@ -182,7 +184,7 @@ export default function ServiceFormPage() {
                 className="w-full bg-secondary border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none transition-all"
                 required
               >
-                <option value="">Wählen...</option>
+                <option value="">{t('pages.serviceForm.select')}</option>
                 {topCategories.map(cat => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
@@ -192,7 +194,7 @@ export default function ServiceFormPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">Unterkategorie</label>
+              <label className="text-sm font-medium text-muted-foreground">{t('pages.serviceForm.unterkategorie')}</label>
               <select
                 value={selectedUnterkategorie}
                 onChange={(e) => setSelectedUnterkategorie(e.target.value)}
@@ -200,7 +202,7 @@ export default function ServiceFormPage() {
                 disabled={!selectedOberkategorie}
                 required
               >
-                <option value="">Wählen...</option>
+                <option value="">{t('pages.serviceForm.select')}</option>
                 {subCategories.map(sub => (
                   <option key={sub.id} value={sub.id}>
                     {sub.name}
@@ -211,37 +213,26 @@ export default function ServiceFormPage() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-medium text-muted-foreground">Titel</label>
+            <label htmlFor="title" className="text-sm font-medium text-muted-foreground">{t('pages.serviceForm.title')}</label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="z.B. Reparatur von Elektrogeräten"
+              placeholder={t('pages.serviceForm.titlePlaceholder')}
               required
               disabled={isSaving}
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="preis" className="text-sm font-medium text-muted-foreground">Preis (€, optional)</label>
-            <Input
-              id="preis"
-              type="number"
-              step="0.01"
-              value={preis}
-              onChange={(e) => setPreis(e.target.value)}
-              placeholder="z.B. 49.99"
-              disabled={isSaving}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="beschreibung" className="text-sm font-medium text-muted-foreground">Beschreibung (optional)</label>
+            <label htmlFor="beschreibung" className="text-sm font-medium text-muted-foreground">
+              {t('pages.serviceForm.beschreibung')} {t('pages.serviceForm.optional')}
+            </label>
             <textarea
               id="beschreibung"
               value={beschreibung}
               onChange={(e) => setBeschreibung(e.target.value)}
-              placeholder="Beschreiben Sie Ihre Dienstleistung näher..."
+              placeholder={t('pages.serviceForm.beschreibungPlaceholder')}
               className="w-full min-h-[120px] bg-secondary border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none transition-all resize-none"
               disabled={isSaving}
             />
@@ -251,12 +242,12 @@ export default function ServiceFormPage() {
             {isSaving ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Wird gespeichert...
+                {t('common.loading')}
               </>
             ) : (
               <>
                 <Save className="w-5 h-5 mr-2" />
-                Speichern
+                {t('common.save')}
               </>
             )}
           </Button>

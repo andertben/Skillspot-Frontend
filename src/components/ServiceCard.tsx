@@ -1,4 +1,4 @@
-import { MapPin, ChevronDown, ChevronUp, Calendar, Loader2, MessageSquarePlus, MessageSquare, Send, X } from 'lucide-react'
+import { MapPin, ChevronDown, ChevronUp, Calendar, Loader2, MessageSquare, Send, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
@@ -76,8 +76,8 @@ function ReviewList({ reviews }: { reviews: Review[] }) {
               <Calendar className="w-3 h-3" />
               <span>
                 {review.createdAt 
-                  ? new Date(review.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
-                  : new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })
+                  ? new Date(review.createdAt).toLocaleDateString(t('locale'), { day: '2-digit', month: '2-digit', year: '2-digit' })
+                  : new Date().toLocaleDateString(t('locale'), { day: '2-digit', month: '2-digit', year: '2-digit' })
                 }
               </span>
             </div>

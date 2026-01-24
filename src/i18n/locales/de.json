@@ -83,7 +83,21 @@
       "noOrders": "Noch keine Bestellungen.",
       "accountDetails": "Kontodetails",
       "createdAt": "Konto erstellt",
-      "updatedAt": "Zuletzt aktualisiert"
+      "updatedAt": "Zuletzt aktualisiert",
+      "servicesTitle": "Meine Dienstleistungen",
+      "loadServicesError": "Fehler beim Laden der Dienstleistungen",
+      "deleteConfirm": "Möchten Sie diese Dienstleistung wirklich löschen?",
+      "deleteError": "Fehler beim Löschen der Dienstleistung",
+      "deleteError401": "Nutzer nicht eingeloggt.",
+      "deleteError403": "Du kannst nur deine eigenen Dienstleistungen löschen.",
+      "deleteError404": "Dienstleistung nicht mehr vorhanden.",
+      "roleLabel": "Rolle",
+      "roleChangeNotice": "Die Rolle kann nach der Registrierung nicht mehr geändert werden.",
+      "addressPlaceholder": "Musterstraße 1, 12345 Berlin",
+      "confirmAddressNotice": "Bitte bestätigen Sie die Adresse mit dem Button 'Adresse übernehmen', um die Standortdaten zu generieren.",
+      "noServices": "Sie haben noch keine Dienstleistungen erstellt.",
+      "createFirstService": "Erste Dienstleistung erstellen",
+      "noDescription": "Keine Beschreibung"
     },
     "chat": {
       "title": "Chat",
@@ -96,6 +110,24 @@
       "sendError": "Fehler beim Senden der Nachricht",
       "pleaseLogin": "Bitte anmelden",
       "loginRequired": "Sie müssen angemeldet sein, um am Chat teilzunehmen."
+    },
+    "serviceForm": {
+      "titleCreate": "Neue Dienstleistung erstellen",
+      "titleEdit": "Dienstleistung bearbeiten",
+      "successTitle": "Erfolgreich gespeichert!",
+      "successMessage": "Ihre Dienstleistung wurde gespeichert. Sie werden zum Profil weitergeleitet...",
+      "oberkategorie": "Oberkategorie",
+      "unterkategorie": "Unterkategorie",
+      "select": "Wählen...",
+      "title": "Titel",
+      "titlePlaceholder": "z.B. Reparatur von Elektrogeräten",
+      "beschreibung": "Beschreibung",
+      "beschreibungPlaceholder": "Beschreiben Sie Ihre Dienstleistung näher...",
+      "optional": "(optional)",
+      "errorCategory": "Bitte wählen Sie eine Unterkategorie aus.",
+      "errorTitle": "Bitte geben Sie einen Titel an.",
+      "errorUnauthorized": "Keine Berechtigung zum Speichern. Bitte melden Sie sich erneut an.",
+      "errorValidation": "Ungültige Eingabedaten."
     }
   },
   "locale": "de-DE",
@@ -107,6 +139,8 @@
     "signup": "Signup",
     "inquiry": "Anfragen",
     "save": "Speichern",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
     "cancel": "Abbrechen",
     "back": "Zurück"
   },
