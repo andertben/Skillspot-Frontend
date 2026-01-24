@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { isAxiosError } from 'axios'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
 import { useUserStore } from '@/hooks/useUserStore'
 import { User, Mail, Clock, Shield, LogOut, Loader2, Save, MapPin, MessageSquare, Trash2, PlusCircle, Edit } from 'lucide-react'
@@ -34,6 +35,7 @@ export default function AccountPage() {
   const [myServices, setMyServices] = useState<Service[]>([])
   const [isServicesLoading, setIsServicesLoading] = useState(false)
   const [servicesError, setServicesError] = useState<string | null>(null)
+  const [deletingServiceId, setDeletingServiceId] = useState<number | null>(null)
 
   const effectiveRole = (role || profile?.role) as UserRole
 
@@ -89,11 +91,25 @@ export default function AccountPage() {
     if (!window.confirm('Möchten Sie diese Dienstleistung wirklich löschen?')) return
 
     try {
+      setDeletingServiceId(id)
       await deleteDienstleistung(id)
       setMyServices(prev => prev.filter(s => s.dienstleistungId !== id))
     } catch (err) {
       console.error('Failed to delete service:', err)
-      alert('Fehler beim Löschen der Dienstleistung')
+      
+      let message = 'Fehler beim Löschen der Dienstleistung'
+      if (isAxiosError(err) && err.response) {
+        if (err.response.status === 401) {
+          message = 'Nutzer nicht eingeloggt.'
+        } else if (err.response.status === 403) {
+          message = 'Du kannst nur deine eigenen Dienstleistungen löschen.'
+        } else if (err.response.status === 404) {
+          message = 'Dienstleistung nicht mehr vorhanden.'
+        }
+      }
+      alert(message)
+    } finally {
+      setDeletingServiceId(null)
     }
   }
 
@@ -460,10 +476,15 @@ export default function AccountPage() {
                             <button
                               type="button"
                               onClick={() => handleDeleteService(service.dienstleistungId)}
-                              className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                              disabled={deletingServiceId === service.dienstleistungId}
+                              className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors disabled:opacity-50"
                               title="Löschen"
                             >
-                              <Trash2 className="w-5 h-5" />
+                              {deletingServiceId === service.dienstleistungId ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-5 h-5" />
+                              )}
                             </button>
                           </div>
                         </div>
@@ -473,37 +494,6 @@ export default function AccountPage() {
                 </div>
               </div>
             )}
-
-            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
-              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-primary" />
-                {t('pages.account.security')}
-              </h3>
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t('pages.account.securityDescription')}
-                </p>
-                <button 
-                  type="button"
-                  className="px-4 py-2 border rounded-lg hover:bg-accent transition-colors text-sm font-medium shadow-sm"
-                >
-                  {t('pages.account.changePassword')}
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
-              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-primary" />
-                {t('pages.account.orderHistory')}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4 italic">
-                {t('pages.account.orderHistoryDescription')}
-              </p>
-              <p className="text-center py-8 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
-                {t('pages.account.noOrders')}
-              </p>
-            </div>
 
             <div className="rounded-lg border p-6 bg-card shadow-sm" style={{ borderColor: 'hsl(var(--border))' }}>
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
