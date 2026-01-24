@@ -1,13 +1,15 @@
-import { MapPin, ChevronDown, ChevronUp, Calendar, Loader2 } from 'lucide-react'
+import { MapPin, ChevronDown, ChevronUp, Calendar, Loader2, MessageSquarePlus, MessageSquare, Send, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { Service } from '@/types/Service'
 import type { Review } from '@/types/Review'
 import StarRating from './StarRating'
 import { createThread } from '@/api/chat'
 import { useOptionalAuth } from '@/auth/useOptionalAuth'
-import { getReviewsByServiceId, getAverageRating, calculateAverageRating } from '@/api/reviews'
+import { getReviewsByServiceId, getAverageRating, calculateAverageRating, createReview } from '@/api/reviews'
+import { isAxiosError } from 'axios'
+import { Button } from '@/components/ui/button'
 
 interface ServiceCardProps {
   service: Service
@@ -103,31 +105,71 @@ export default function ServiceCard({
   const [averageRating, setAverageRating] = useState<number | null>(null)
   const [isLoadingReviews, setIsLoadingReviews] = useState(false)
 
-  useEffect(() => {
-    const fetchReviewData = async () => {
-      try {
-        setIsLoadingReviews(true)
-        const [reviewsData, avgRating] = await Promise.all([
-          getReviewsByServiceId(service.dienstleistungId),
-          getAverageRating(service.dienstleistungId)
-        ])
-        setReviews(reviewsData)
-        
-        // Use average rating from API if available, otherwise calculate locally
-        if (avgRating !== null && !isNaN(avgRating)) {
-          setAverageRating(avgRating)
-        } else {
-          setAverageRating(calculateAverageRating(reviewsData))
-        }
-      } catch (error) {
-        console.error('Failed to fetch reviews for service:', service.dienstleistungId, error)
-      } finally {
-        setIsLoadingReviews(false)
+  // Review Form State
+  const [isWritingReview, setIsWritingReview] = useState(false)
+  const [newRating, setNewRating] = useState(5)
+  const [newComment, setNewComment] = useState('')
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false)
+  const [reviewError, setReviewError] = useState<string | null>(null)
+
+  const fetchReviewData = useCallback(async () => {
+    try {
+      setIsLoadingReviews(true)
+      const [reviewsData, avgRating] = await Promise.all([
+        getReviewsByServiceId(service.dienstleistungId),
+        getAverageRating(service.dienstleistungId)
+      ])
+      setReviews(reviewsData)
+      
+      if (avgRating !== null && !isNaN(avgRating)) {
+        setAverageRating(avgRating)
+      } else {
+        setAverageRating(calculateAverageRating(reviewsData))
       }
+    } catch (error) {
+      console.error('Failed to fetch reviews for service:', service.dienstleistungId, error)
+    } finally {
+      setIsLoadingReviews(false)
+    }
+  }, [service.dienstleistungId])
+
+  useEffect(() => {
+    fetchReviewData()
+  }, [fetchReviewData])
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isAuthenticated) {
+      await loginWithPopup()
+      return
     }
 
-    fetchReviewData()
-  }, [service.dienstleistungId])
+    setReviewError(null)
+    setIsSubmittingReview(true)
+
+    try {
+      await createReview(service.dienstleistungId, newRating, newComment)
+      // Success! Reset form and reload
+      setIsWritingReview(false)
+      setNewRating(5)
+      setNewComment('')
+      await fetchReviewData()
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          setReviewError(t('pages.account.notAuthenticated') || 'Bitte einloggen')
+        } else if (error.response?.data?.message) {
+          setReviewError(error.response.data.message)
+        } else {
+          setReviewError(t('common.error') || 'Ein Fehler ist aufgetreten')
+        }
+      } else {
+        setReviewError(t('common.error') || 'Ein Fehler ist aufgetreten')
+      }
+    } finally {
+      setIsSubmittingReview(false)
+    }
+  }
 
   return (
     <div className={`bg-card rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-border flex flex-col ${isExpanded ? 'ring-1 ring-primary/20' : ''}`}>
@@ -208,17 +250,114 @@ export default function ServiceCard({
 
         {isExpanded && (
           <div className="mt-2 animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
-            {service.beschreibung && (
-              <div className="py-4 border-t border-border/50">
-                <h4 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wider">{t('pages.services.description')}</h4>
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                  {service.beschreibung}
-                </p>
-              </div>
-            )}
             {!isLoadingReviews && (
               <>
                 {reviews.length > 0 && <RatingBars reviews={reviews} />}
+                
+                <div className="py-2">
+                  {!isWritingReview ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsWritingReview(true)
+                      }}
+                      className="w-full flex items-center justify-center gap-2 text-primary hover:bg-primary/5 border border-dashed border-primary/20 rounded-xl py-6"
+                    >
+                      <MessageSquare className="w-5 h-5" />
+                      <span className="font-bold uppercase tracking-wider text-xs">
+                        {t('pages.services.writeReview') || 'Bewertung schreiben'}
+                      </span>
+                    </Button>
+                  ) : (
+                    <form 
+                      onSubmit={handleSubmitReview}
+                      onClick={(e) => e.stopPropagation()}
+                      className="bg-accent/5 p-5 rounded-2xl border border-primary/10 space-y-4 animate-in fade-in zoom-in-95 duration-200"
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-primary/70">
+                          {t('pages.services.writeReview') || 'Neue Bewertung'}
+                        </h4>
+                        <button 
+                          type="button" 
+                          onClick={() => setIsWritingReview(false)}
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight ml-1">
+                            {t('pages.services.rating') || 'Sterne'}
+                          </label>
+                          <select 
+                            value={newRating} 
+                            onChange={(e) => setNewRating(Number(e.target.value))}
+                            className="bg-background border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                            disabled={isSubmittingReview}
+                          >
+                            {[5, 4, 3, 2, 1].map(n => (
+                              <option key={n} value={n}>{n} {n === 1 ? (t('pages.services.star') || 'Stern') : (t('pages.services.stars') || 'Sterne')}</option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight ml-1">
+                            {t('pages.services.comment') || 'Ihr Kommentar'}
+                          </label>
+                          <textarea
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder={t('pages.services.reviewPlaceholder') || 'Wie war Ihre Erfahrung?'}
+                            className="bg-background border border-border rounded-xl px-4 py-3 text-sm min-h-[100px] w-full resize-none outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            disabled={isSubmittingReview}
+                          />
+                        </div>
+                      </div>
+
+                      {reviewError && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                          <p className="text-xs text-destructive font-semibold flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-destructive" />
+                            {reviewError}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-3 pt-1">
+                        <Button
+                          type="submit"
+                          size="sm"
+                          disabled={isSubmittingReview || !newComment.trim()}
+                          className="flex-1 flex items-center justify-center gap-2 font-bold rounded-xl h-11"
+                        >
+                          {isSubmittingReview ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Send className="w-4 h-4" />
+                          )}
+                          {t('common.save') || 'Bewertung senden'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsWritingReview(false)}
+                          disabled={isSubmittingReview}
+                          className="px-4 h-11 rounded-xl font-semibold text-muted-foreground hover:text-foreground"
+                        >
+                          {t('common.cancel') || 'Abbrechen'}
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+
                 <ReviewList reviews={reviews} />
               </>
             )}

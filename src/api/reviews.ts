@@ -53,6 +53,30 @@ export async function getReviewsByProviderId(providerId: number | string): Promi
   }
 }
 
+export async function createReview(serviceId: number, rating: number, comment: string): Promise<Review> {
+  try {
+    const response = await api.post('/bewertungen', {
+      dienstleistungId: serviceId,
+      bewertung: rating,
+      text: comment
+    })
+    
+    const raw = response.data
+    // Normalize response to Review type
+    return {
+      id: Number(raw.id || raw.bewertungId || raw.bewertung_id),
+      serviceId: Number(raw.dienstleistungId ?? raw.dienstleistung_id ?? raw.serviceId ?? raw.service_id ?? serviceId),
+      providerId: Number(raw.anbieterId ?? raw.anbieter_id ?? raw.providerId ?? raw.provider_id),
+      rating: Number(raw.rating ?? raw.bewertung ?? rating),
+      comment: String(raw.comment ?? raw.text ?? comment),
+      createdAt: raw.createdAt || raw.datum || new Date().toISOString()
+    }
+  } catch (error) {
+    console.error('[REVIEWS API] createReview failed:', error)
+    throw error
+  }
+}
+
 export function calculateAverageRating(reviews: Review[]): number | null {
   const validReviews = reviews.filter((r) => r.rating !== null)
   if (validReviews.length === 0) return null

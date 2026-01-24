@@ -24,6 +24,10 @@
       "noReviewText": "Kein Kommentar hinterlassen",
       "star": "Stern",
       "stars": "Sterne",
+      "rating": "Bewertung",
+      "comment": "Kommentar",
+      "writeReview": "Bewertung schreiben",
+      "reviewPlaceholder": "Schreiben Sie hier Ihre Bewertung...",
       "description": "Beschreibung",
       "locations": "Standorte",
       "subcategories": "Unterkategorien",
@@ -99,6 +103,8 @@
     "logout": "Logout",
     "signup": "Signup",
     "inquiry": "Anfragen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
     "back": "Zurück"
   },
   "map": {
