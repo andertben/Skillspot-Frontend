@@ -35,6 +35,8 @@ export default function AccountPage() {
   const [isServicesLoading, setIsServicesLoading] = useState(false)
   const [servicesError, setServicesError] = useState<string | null>(null)
 
+  const effectiveRole = (role || profile?.role) as UserRole
+
   useEffect(() => {
     // Only fetch if profile is missing. 
     // ProfileGate already handles the initial fetch for the app.
@@ -98,7 +100,11 @@ export default function AccountPage() {
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.displayName || '')
-      setRole(profile.role || '')
+      // Only set role if it's not already set or if profile has a valid role.
+      // Do not fallback to '' if profile.role exists.
+      if (profile.role) {
+        setRole(profile.role)
+      }
       setAddress(profile.address || '')
       setLocationLat(profile.locationLat ?? null)
       setLocationLon(profile.locationLon ?? null)
@@ -151,17 +157,17 @@ export default function AccountPage() {
       return
     }
 
-    if (!role) {
+    if (!effectiveRole) {
       setLocalError(t('auth.profile.role') + ' ' + t('common.error'))
       return
     }
 
-    if (role === 'PROVIDER' && !address.trim()) {
+    if (effectiveRole === 'PROVIDER' && !address.trim()) {
       setLocalError(t('auth.profile.address') + ' ' + t('common.error'))
       return
     }
 
-    if (role === 'PROVIDER' && (locationLat === null || locationLon === null)) {
+    if (effectiveRole === 'PROVIDER' && (locationLat === null || locationLon === null)) {
       setLocalError("Bitte bestätigen Sie die Adresse mit dem Button 'Adresse übernehmen', um die Standortdaten zu generieren.")
       return
     }
@@ -169,10 +175,10 @@ export default function AccountPage() {
     try {
       await updateProfileDetails({
         displayName: displayName.trim(),
-        role: role as UserRole,
-        address: role === 'PROVIDER' ? address.trim() : null,
-        locationLat: role === 'PROVIDER' ? locationLat : null,
-        locationLon: role === 'PROVIDER' ? locationLon : null,
+        role: effectiveRole,
+        address: effectiveRole === 'PROVIDER' ? address.trim() : null,
+        locationLat: effectiveRole === 'PROVIDER' ? locationLat : null,
+        locationLon: effectiveRole === 'PROVIDER' ? locationLon : null,
       })
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 3000)
@@ -317,7 +323,7 @@ export default function AccountPage() {
 
                 <Button 
                   type="submit" 
-                  disabled={loading || (role === 'PROVIDER' && (!locationLat || !locationLon))}
+                  disabled={loading || (effectiveRole === 'PROVIDER' && (!locationLat || !locationLon))}
                   className="w-full sm:w-auto mt-2"
                 >
                   {loading ? (

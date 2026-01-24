@@ -64,6 +64,13 @@ export function ProfileCompletionModal({ isOpen }: ProfileCompletionModalProps) 
     if (!displayName || !role) return
 
     setLocalError(null)
+
+    // Validation for PROVIDER coordinates
+    if (role === 'PROVIDER' && (locationLat === null || locationLon === null)) {
+      setLocalError(t('auth.profile.geocodingError') || 'Bitte bestätigen Sie Ihre Adresse.')
+      return
+    }
+
     try {
       await updateProfile({
         displayName: displayName.trim(),

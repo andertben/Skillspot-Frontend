@@ -61,9 +61,12 @@ export const useUserStore = create<UserState>((set) => ({
     try {
       const updatedProfile = await updateUserProfile(data)
       // Ensure profileComplete remains true if we are updating details (since the user already completed it)
+      // Also ensure role is preserved if it's not in the response
       set((state) => ({ 
         profile: { 
-          ...updatedProfile, 
+          ...state.profile,
+          ...updatedProfile,
+          role: updatedProfile.role ?? state.profile?.role ?? data.role,
           profileComplete: updatedProfile.profileComplete ?? state.profile?.profileComplete ?? true 
         }, 
         loading: false 

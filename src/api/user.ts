@@ -7,6 +7,14 @@ export const getMe = async (): Promise<UserProfile> => {
 }
 
 export const updateUserProfile = async (data: UpdateProfileRequest): Promise<UserProfile> => {
+  // Backend requires `role` on PUT /me/profile (400 "Role is required" otherwise).
+  // The UI may not allow changing the role here, but we still must send the current role.
+  
+  if (!data.role) {
+    console.error('[updateUserProfile] Missing role in update request', data)
+    throw new Error('Role is required for profile update')
+  }
+
   const payload: UpdateProfileRequest = {
     displayName: data.displayName,
     role: data.role,
@@ -15,6 +23,7 @@ export const updateUserProfile = async (data: UpdateProfileRequest): Promise<Use
     locationLon: data.locationLon ?? null,
   }
 
+  console.debug('[updateUserProfile] PUT /me/profile payload', payload)
   const response = await api.put<UserProfile>('/me/profile', payload)
   return response.data
 }
