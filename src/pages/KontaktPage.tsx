@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Mail, MapPin, Users, MessageSquare, Clock, ShieldCheck, Copy, Check, Send } from 'lucide-react'
+import { Mail, Users, MessageSquare, Clock, ShieldCheck, Copy, Check, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function KontaktPage() {
@@ -46,14 +46,12 @@ export default function KontaktPage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button 
-                    asChild 
                     size="sm" 
                     className="rounded-xl flex-1 sm:flex-none"
+                    onClick={() => window.location.href = `mailto:${t('contact.section.details.emailValue')}`}
                   >
-                    <a href={`mailto:${t('contact.section.details.emailValue')}`}>
-                      <Send className="w-4 h-4 mr-2" />
-                      {t('contact.actions.mailButton')}
-                    </a>
+                    <Send className="w-4 h-4 mr-2" />
+                    {t('contact.actions.mailButton')}
                   </Button>
                   <Button 
                     variant="secondary" 
