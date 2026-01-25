@@ -32,7 +32,7 @@ function MapController({ center, zoom }: { center: [number, number]; zoom?: numb
 
 export default function ServicesByCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { location: userLocation } = useUserLocation()
   
   const auth = useOptionalAuth()
@@ -76,7 +76,7 @@ export default function ServicesByCategoryPage() {
       }
     }
     fetchData()
-  }, [categoryId, t, auth.isLoading])
+  }, [categoryId, t, auth.isLoading, i18n.language])
 
   const providersById = useMemo(() => {
     const map: Record<number, Provider> = {}
@@ -236,8 +236,8 @@ export default function ServicesByCategoryPage() {
                       cardRefs.current[service.dienstleistungId] = el
                     }}
                     onClick={() => handleSelectProvider(service.anbieterId, 'card', service.dienstleistungId)}
-                    className={`cursor-pointer transition-all duration-300 rounded-2xl ${
-                      isSelected ? 'ring-2 ring-primary shadow-xl scale-[1.01]' : ''
+                    className={`cursor-pointer transition-all duration-200 rounded-2xl ${
+                      isSelected ? 'ring-2 ring-primary shadow-2xl z-10' : 'hover:shadow-lg'
                     }`}
                   >
                     <ServiceCard 

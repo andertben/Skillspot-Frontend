@@ -21,6 +21,17 @@
       "noResults": "No subcategories found.",
       "noSearchResults": "No results for \"{query}\"",
       "noReviews": "No reviews available yet",
+      "noReviewText": "No comment left",
+      "star": "Star",
+      "stars": "Stars",
+      "rating": "Rating",
+      "comment": "Comment",
+      "writeReview": "Write a review",
+      "newReview": "New Review",
+      "yourComment": "Your Comment",
+      "sendReview": "Send Review",
+      "reviewPlaceholder": "How was your experience?",
+      "description": "Description",
       "locations": "Locations",
       "subcategories": "Subcategories",
       "noServicesFound": "No services found.",
@@ -47,7 +58,71 @@
     },
     "about": {
       "title": "About Us",
-      "description": "Information about Skillspot"
+      "subtitle": "Skillspot, Find services and skills near you",
+      "intro1": "Skillspot is a modern platform from Germany that brings people and services together easily, transparently, and locally. Our goal is to make the search for the right provider as uncomplicated as possible while offering local service providers a strong digital presence.",
+      "intro2": "Whether it's craftsmen, IT services, tutoring, or creative services: Skillspot makes offers visible, comparable, and directly reachable.",
+      "mission": {
+        "title": "Our Mission",
+        "subtitle": "We want to rethink local services.",
+        "text": "Instead of confusing classifieds portals or anonymous platforms, we focus on:",
+        "point1": "real proximity through regional providers",
+        "point2": "transparent information and reviews",
+        "point3": "direct communication between customers and service providers",
+        "footer": "This creates trust, efficiency, and a fair marketplace for everyone involved."
+      },
+      "special": {
+        "title": "What makes Skillspot special",
+        "intro": "Compared to classic platforms, Skillspot pursues a clear focus:",
+        "point1": {
+          "title": "Strong Local Focus",
+          "text": "Services are specifically displayed in your area, including distance and location on the map."
+        },
+        "point2": {
+          "title": "Direct Communication",
+          "text": "Customers and providers can chat directly with each other, clarify offers, and discuss details without detours."
+        },
+        "point3": {
+          "title": "Transparency through Reviews",
+          "text": "Real reviews and clear profiles create trust and help you make the right decision."
+        }
+      },
+      "audience": {
+        "title": "Who we are here for",
+        "intro": "Skillspot is aimed at:",
+        "point1": "Individuals who need help or services quickly",
+        "point2": "Companies looking for reliable local partners",
+        "point3": "Service providers and craftsmen who want to gain new customers",
+        "footer": "The focus is deliberately on regional networking, with the possibility of growing supra-regionally later."
+      },
+      "who": {
+        "title": "Who we are",
+        "intro": "Skillspot was developed by two founders:",
+        "founder1": "Ben Andert",
+        "founder2": "Bennet Weiß",
+        "text": "As a small, dedicated team, we are continuously developing Skillspot and actively listening to the feedback from our users."
+      },
+      "values": {
+        "title": "Our Values",
+        "intro": "Our work is based on clear fundamental principles:",
+        "point1": "Trust through transparency",
+        "point2": "Fairness towards customers and providers",
+        "point3": "Data protection and security",
+        "point4": "Quality over quantity",
+        "point5": "Simplicity in use",
+        "footer": "These values shape every decision in the further development of the platform."
+      },
+      "vision": {
+        "title": "Our Vision",
+        "text1": "We believe in a future where local services are digitally just as visible and accessible as large online offers.",
+        "highlight": "Our Vision:",
+        "main": "Skillspot aims to become the central platform for local services in Germany and eventually connect people in other countries as well.",
+        "footer": "In doing so, we don't just want to mediate, but create real digital neighborhoods."
+      },
+      "cta": {
+        "title": "Become part of Skillspot",
+        "subtitle": "Whether as a customer or as a provider:",
+        "text": "Discover Skillspot and experience how easy local services can work today."
+      }
     },
     "map": {
       "title": "Map",
@@ -72,7 +147,21 @@
       "noOrders": "No orders yet.",
       "accountDetails": "Account Details",
       "createdAt": "Account created",
-      "updatedAt": "Last updated"
+      "updatedAt": "Last updated",
+      "servicesTitle": "My Services",
+      "loadServicesError": "Error loading services",
+      "deleteConfirm": "Are you sure you want to delete this service?",
+      "deleteError": "Error deleting service",
+      "deleteError401": "User not logged in.",
+      "deleteError403": "You can only delete your own services.",
+      "deleteError404": "Service no longer exists.",
+      "roleLabel": "Role",
+      "roleChangeNotice": "The role cannot be changed after registration.",
+      "addressPlaceholder": "Example St 1, 12345 Berlin",
+      "confirmAddressNotice": "Please confirm the address with the 'Use Address' button to generate location data.",
+      "noServices": "You haven't created any services yet.",
+      "createFirstService": "Create first service",
+      "noDescription": "No description"
     },
     "chat": {
       "title": "Chat",
@@ -85,6 +174,24 @@
       "sendError": "Error sending message",
       "pleaseLogin": "Please log in",
       "loginRequired": "You must be logged in to participate in the chat."
+    },
+    "serviceForm": {
+      "titleCreate": "Create New Service",
+      "titleEdit": "Edit Service",
+      "successTitle": "Successfully saved!",
+      "successMessage": "Your service has been saved. Redirecting to profile...",
+      "oberkategorie": "Main Category",
+      "unterkategorie": "Sub Category",
+      "select": "Select...",
+      "title": "Title",
+      "titlePlaceholder": "e.g., Repair of electrical appliances",
+      "beschreibung": "Description",
+      "beschreibungPlaceholder": "Describe your service in more detail...",
+      "optional": "(optional)",
+      "errorCategory": "Please select a subcategory.",
+      "errorTitle": "Please provide a title.",
+      "errorUnauthorized": "No permission to save. Please log in again.",
+      "errorValidation": "Invalid input data."
     }
   },
   "locale": "en-US",
@@ -95,6 +202,10 @@
     "logout": "Logout",
     "signup": "Signup",
     "inquiry": "Inquiry",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
     "back": "Back"
   },
   "map": {
@@ -158,5 +269,167 @@
     "datenschutz": "Privacy Policy",
     "projectHint": "Skillspot is a student project of TH Brandenburg.",
     "copyright": "© 2026 Skillspot. All rights reserved."
+  },
+  "imprint": {
+    "title": "Legal notice",
+    "section": {
+      "operator": {
+        "title": "Information according to § 5 TMG",
+        "content": "Skillspot\nBennet Weiß & Ben Andert\nBrandenburg University of Applied Sciences\nMagdeburger Straße 50\n14770 Brandenburg an der Havel\nGermany"
+      },
+      "contact": {
+        "title": "Contact",
+        "phoneLabel": "Phone:",
+        "phoneValue": "+49 (0) 000 0000000",
+        "emailLabel": "Email:",
+        "emailValue": "kontakt@skillspot.de"
+      },
+      "responsible": {
+        "title": "Responsible for content according to § 55 Abs. 2 RStV",
+        "content": "Bennet Weiß\nBen Andert\nAddress as above"
+      },
+      "disclaimer": {
+        "title": "Disclaimer",
+        "content1": "As a service provider, we are responsible for our own content on these pages according to general laws.",
+        "content2": "However, as a service provider, we are not obligated to monitor transmitted or stored third-party information.",
+        "content3": "Obligations to remove or block the use of information under general laws remain unaffected."
+      },
+      "links": {
+        "title": "Liability for links",
+        "content": "Our website contains links to external third-party websites over whose content we have no control."
+      },
+      "copyright": {
+        "title": "Copyright",
+        "content": "The content and works created by the site operators on these pages are subject to German copyright law."
+      },
+      "privacy": {
+        "title": "Privacy",
+        "content": "Information on data protection can be found in our separate privacy policy."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "intro": "We take the protection of your personal data seriously. This privacy policy explains what personal data we collect and how we use it when you use Skillspot.",
+    "section": {
+      "controller": {
+        "title": "1. Controller",
+        "content": "Skillspot\nBennet Weiß & Ben Andert\nBrandenburg University of Applied Sciences\nMagdeburger Straße 50\n14770 Brandenburg an der Havel\nGermany\nEmail: kontakt@skillspot.de"
+      },
+      "dataTypes": {
+        "title": "2. Data we process",
+        "intro": "Depending on how you use the platform, we may process the following data:",
+        "item1": "Account data: name/display name, email address, authentication ID (e.g., Auth0 subject).",
+        "item2": "Profile data: role (user/provider), optional address and location coordinates (lat/lon) if you act as a provider.",
+        "item3": "Content data: services you create (title, description, category), chat messages, reviews.",
+        "item4": "Technical data: IP address (temporarily), browser/device information, logs, timestamps."
+      },
+      "purposes": {
+        "title": "3. Purposes of processing",
+        "intro": "We process data for the following purposes:",
+        "item1": "Providing platform features (login, profile, categories, services, chat).",
+        "item2": "Showing providers and services near you (only for provider profiles and if location data is available).",
+        "item3": "Security, troubleshooting, and abuse prevention.",
+        "item4": "Communication with you (support requests)."
+      },
+      "legalBasis": {
+        "title": "4. Legal bases",
+        "intro": "Depending on the context, processing is based in particular on:",
+        "item1": "Art. 6(1)(b) GDPR (performance of a contract / use of the platform).",
+        "item2": "Art. 6(1)(f) GDPR (legitimate interests, e.g., IT security and platform operation).",
+        "item3": "Art. 6(1)(a) GDPR (consent), where we ask for your consent."
+      },
+      "auth0": {
+        "title": "5. Authentication (Auth0)",
+        "content1": "For login and authentication, we use an external authentication service (e.g., Auth0). This involves processing data required for authentication, in particular your email address and a technical user identifier.",
+        "content2": "We receive a unique user ID (subject) from the service to link your account within Skillspot. Skillspot does not store passwords."
+      },
+      "location": {
+        "title": "6. Location data",
+        "content1": "If you act as a provider, you can enter an address. Location coordinates (lat/lon) may be calculated from it to show your position on the map.",
+        "content2": "Providing location information is voluntary, but it may be necessary for the map feature to be useful for providers."
+      },
+      "chat": {
+        "title": "7. Chat and reviews",
+        "content1": "When you use the chat, message content and timestamps are stored so communication between users and providers can work.",
+        "content2": "When you submit a review, the star rating and text are stored and displayed with the referenced service."
+      },
+      "recipients": {
+        "title": "8. Recipients and sharing",
+        "intro": "We generally do not share personal data with third parties, except:",
+        "item1": "when required to use services (e.g., authentication via Auth0),",
+        "item2": "when legally required, or",
+        "item3": "when you have given consent."
+      },
+      "storage": {
+        "title": "9. Storage period",
+        "content": "We store personal data only as long as necessary for the purposes described or as required by law. You can update your profile; upon request, we can delete data unless retention obligations apply."
+      },
+      "rights": {
+        "title": "10. Your rights",
+        "intro": "Under the GDPR, you have the following rights in particular:",
+        "item1": "Access to your stored data (Art. 15 GDPR).",
+        "item2": "Rectification of inaccurate data (Art. 16 GDPR).",
+        "item3": "Erasure of your data (Art. 17 GDPR), where applicable.",
+        "item4": "Restriction of processing (Art. 18 GDPR).",
+        "item5": "Data portability (Art. 20 GDPR), where applicable.",
+        "item6": "Objection to processing (Art. 21 GDPR), where applicable.",
+        "contact": "To exercise your rights, contact us at: kontakt@skillspot.de"
+      },
+      "security": {
+        "title": "11. Security",
+        "content": "We apply appropriate technical and organizational measures to protect your data. However, complete security of data transmission over the internet cannot be guaranteed."
+      },
+      "changes": {
+        "title": "12. Changes to this privacy policy",
+        "content": "We may update this privacy policy if features or legal requirements change. The current version is available in the app."
+      }
+    },
+    "meta": {
+      "lastUpdatedLabel": "Last updated:",
+      "lastUpdatedValue": "2026-01-24"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Do you have questions about Skillspot or need help? Feel free to contact us. We will get back to you as soon as possible.",
+    "section": {
+      "details": {
+        "title": "Contact details",
+        "emailLabel": "Email",
+        "emailValue": "kontakt@skillspot.de",
+        "addressLabel": "Address",
+        "addressValue": "Brandenburg University of Applied Sciences\nMagdeburger Straße 50\n14770 Brandenburg an der Havel\nGermany"
+      },
+      "people": {
+        "title": "Contacts",
+        "intro": "You can contact us directly:",
+        "person1": {
+          "name": "Bennet Weiß",
+          "role": "Skillspot project team"
+        },
+        "person2": {
+          "name": "Ben Andert",
+          "role": "Skillspot project team"
+        }
+      },
+      "support": {
+        "title": "Support & feedback",
+        "text": "If you found a bug or want to share feedback, please describe what happened (including a screenshot if possible) and the steps you took before it occurred."
+      },
+      "responseTime": {
+        "title": "Response time",
+        "text": "We usually respond within 1 to 3 business days."
+      },
+      "privacyHint": {
+        "title": "Privacy note",
+        "text": "If you contact us by email, we process your information to handle your request. For more details, see our privacy policy."
+      }
+    },
+    "actions": {
+      "mailButton": "Send email",
+      "copyEmail": "Copy email",
+      "copied": "Copied"
+    }
   }
 }

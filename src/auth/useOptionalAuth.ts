@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 
-interface OptionalAuthState {
+export interface OptionalAuthState {
   isLoading: boolean
   isAuthenticated: boolean
   user: {

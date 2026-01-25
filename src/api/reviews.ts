@@ -1,9 +1,29 @@
 import api from './client'
 import type { Review } from '@/types/Review'
 
+interface RawReview {
+  id?: number | string
+  bewertungId?: number | string
+  bewertung_id?: number | string
+  dienstleistungId?: number | string
+  dienstleistung_id?: number | string
+  serviceId?: number | string
+  service_id?: number | string
+  anbieterId?: number | string
+  anbieter_id?: number | string
+  providerId?: number | string
+  provider_id?: number | string
+  rating?: number | string
+  bewertung?: number | string
+  comment?: string
+  text?: string
+  createdAt?: string
+  datum?: string
+}
+
 export async function getReviewsByServiceId(serviceId: number | string): Promise<Review[]> {
   try {
-    const response = await api.get<any[]>(`/api/reviews/service/${serviceId}`)
+    const response = await api.get<RawReview[]>(`/api/reviews/service/${serviceId}`)
     const normalized = response.data.map(raw => {
       const normalizedReview: Review = {
         id: Number(raw.id || raw.bewertungId || raw.bewertung_id),
@@ -50,6 +70,30 @@ export async function getReviewsByProviderId(providerId: number | string): Promi
   } catch (error) {
     console.error(`[BACKEND] GET /api/reviews/provider/${providerId} failed:`, error)
     return []
+  }
+}
+
+export async function createReview(serviceId: number, rating: number, comment: string): Promise<Review> {
+  try {
+    const response = await api.post('/bewertungen', {
+      dienstleistungId: serviceId,
+      bewertung: rating,
+      text: comment
+    })
+    
+    const raw = response.data
+    // Normalize response to Review type
+    return {
+      id: Number(raw.id || raw.bewertungId || raw.bewertung_id),
+      serviceId: Number(raw.dienstleistungId ?? raw.dienstleistung_id ?? raw.serviceId ?? raw.service_id ?? serviceId),
+      providerId: Number(raw.anbieterId ?? raw.anbieter_id ?? raw.providerId ?? raw.provider_id),
+      rating: Number(raw.rating ?? raw.bewertung ?? rating),
+      comment: String(raw.comment ?? raw.text ?? comment),
+      createdAt: raw.createdAt || raw.datum || new Date().toISOString()
+    }
+  } catch (error) {
+    console.error('[REVIEWS API] createReview failed:', error)
+    throw error
   }
 }
 

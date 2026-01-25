@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import { useOptionalAuth } from '@/auth/useOptionalAuth'
+import { useOptionalAuth, type OptionalAuthState } from '@/auth/useOptionalAuth'
 import api from '@/api/client'
 
 const ENABLE_AUTH_DEBUG = import.meta.env.DEV
 
 // Use a module-level variable to store the latest auth state
 // This allows the interceptor to be registered once and always have access to the latest state
-let latestAuth: any = null
+let latestAuth: OptionalAuthState | null = null
 
 // Register the interceptor once at module level
 api.interceptors.request.use(async (config) => {
@@ -37,6 +37,7 @@ export function useSetupAuthInterceptor() {
   const auth = useOptionalAuth()
   
   // Update synchronously during render so children can use it immediately
+  // eslint-disable-next-line react-hooks/globals
   latestAuth = auth
 
   // Also update on every state change

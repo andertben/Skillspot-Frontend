@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
+import i18n from '@/i18n/i18n'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 const ENABLE_API_DEBUG = import.meta.env.DEV
@@ -9,6 +10,12 @@ const api: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+})
+
+api.interceptors.request.use((config) => {
+  const lang = i18n.language || 'de'
+  config.headers['Accept-Language'] = lang
+  return config
 })
 
 api.interceptors.response.use(

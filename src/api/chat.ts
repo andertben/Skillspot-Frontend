@@ -50,10 +50,28 @@ export async function getThread(threadId: string): Promise<Thread> {
   }
 }
 
+interface ChatMessageDto {
+  messageId: string | number
+  threadId: string | number
+  senderSub: string
+  text: string
+  createdAt: string
+}
+
+function mapDtoToMessage(dto: ChatMessageDto): Message {
+  return {
+    id: String(dto.messageId),
+    threadId: String(dto.threadId),
+    senderId: dto.senderSub,
+    text: dto.text,
+    timestamp: dto.createdAt
+  }
+}
+
 export async function getMessages(threadId: string): Promise<Message[]> {
   try {
-    const response = await api.get<Message[]>(`/chat/threads/${threadId}/messages`)
-    return response.data
+    const response = await api.get<ChatMessageDto[]>(`/chat/threads/${threadId}/messages`)
+    return response.data.map(mapDtoToMessage)
   } catch (error) {
     console.error('[CHAT API] getMessages failed:', error)
     throw error
@@ -62,8 +80,8 @@ export async function getMessages(threadId: string): Promise<Message[]> {
 
 export async function sendMessage(threadId: string, text: string): Promise<Message> {
   try {
-    const response = await api.post<Message>(`/chat/threads/${threadId}/messages`, { text })
-    return response.data
+    const response = await api.post<ChatMessageDto>(`/chat/threads/${threadId}/messages`, { text })
+    return mapDtoToMessage(response.data)
   } catch (error) {
     console.error('[CHAT API] sendMessage failed:', error)
     throw error
