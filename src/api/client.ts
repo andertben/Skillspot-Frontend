@@ -2,11 +2,16 @@ import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import i18n from '@/i18n/i18n'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
+if (!API_BASE_URL && import.meta.env.PROD) {
+  console.warn('VITE_API_URL is not defined in production environment!')
+}
+
 const ENABLE_API_DEBUG = import.meta.env.DEV
 
 const api: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL || 'http://localhost:8080',
   headers: {
     'Content-Type': 'application/json',
   },
