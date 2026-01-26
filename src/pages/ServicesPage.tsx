@@ -151,7 +151,9 @@ export default function ServicesPage() {
                   <div
                     className={`${getColorForCategory(category.id)} w-full h-40 flex items-center justify-center rounded-t-lg`}
                   >
-                    <p className="text-sm font-medium text-gray-600">{t('pages.services.noImage')}</p>
+                    <span className="text-4xl text-gray-700" aria-hidden="true">
+                      {category.icon ?? '🚫'}
+                    </span>
                   </div>
 
                   <div className="p-4 flex flex-col flex-grow">
