@@ -99,6 +99,10 @@ export default function HomePage() {
                     </p>
                   </div>
 
+                  <span className="text-4xl text-gray-700" aria-hidden="true">
+                    {category.icon ?? '🚫'}
+                  </span>
+
                   <div className="flex items-center gap-2 text-gray-700">
                     <span className="text-sm font-semibold">{t('pages.home.explore')}</span>
                     <ChevronRight className="w-5 h-5" />
