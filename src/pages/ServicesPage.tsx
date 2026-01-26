@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getCategories, getSubCategories } from '@/api/categories'
+import { getCategories, getSubCategories, getTopLevelCategories } from '@/api/categories'
 import type { NormalizedCategory } from '@/types/Category'
 import { WeatherWidget } from '@/components/WeatherWidget'
 
@@ -19,8 +19,9 @@ const CATEGORY_COLORS = [
 export default function ServicesPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [subcategories, setSubcategories] = useState<NormalizedCategory[]>([])
+  const [topCategories, setTopCategories] = useState<NormalizedCategory[]>([])
   const [topCategory, setTopCategory] = useState<NormalizedCategory | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -28,6 +29,7 @@ export default function ServicesPage() {
   const [searchText, setSearchText] = useState('')
 
   const topCategoryId = searchParams.get('top') ? parseInt(searchParams.get('top')!) : null
+  const selectedTopValue = topCategoryId ? String(topCategoryId) : ''
 
   const isGardening = 
     topCategory?.name.toLowerCase() === 'gartenarbeiten' || 
@@ -44,6 +46,7 @@ export default function ServicesPage() {
         setError(null)
 
         const categories = await getCategories()
+        setTopCategories(getTopLevelCategories(categories))
 
         const allSubcategories = categories.filter((c) => c.parentId && c.parentId !== 0)
 
@@ -81,6 +84,16 @@ export default function ServicesPage() {
     setRetryCount((prev) => prev + 1)
   }
 
+  const handleTopCategoryChange = (value: string) => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (value === '') {
+      nextParams.delete('top')
+    } else {
+      nextParams.set('top', value)
+    }
+    setSearchParams(nextParams)
+  }
+
   const getColorForCategory = (kategorieId: number): string => {
     return CATEGORY_COLORS[kategorieId % CATEGORY_COLORS.length]
   }
@@ -97,7 +110,7 @@ export default function ServicesPage() {
           </div>
           
           {!loading && !error && subcategories.length > 0 && (
-            <div className="max-w-md">
+            <div className="max-w-md flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
                 placeholder={t('pages.services.searchPlaceholder')}
@@ -106,6 +119,21 @@ export default function ServicesPage() {
                 className="w-full px-4 py-2 rounded-lg border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ borderColor: 'hsl(var(--border))' }}
               />
+              {topCategories.length > 0 && (
+                <select
+                  value={selectedTopValue}
+                  onChange={(e) => handleTopCategoryChange(e.target.value)}
+                  className="w-full sm:w-56 px-4 py-2 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  style={{ borderColor: 'hsl(var(--border))' }}
+                >
+                  <option value="">{t('pages.services.filterCategory')}</option>
+                  {topCategories.map((category) => (
+                    <option key={category.id} value={String(category.id)}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
         </div>

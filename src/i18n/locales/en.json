@@ -18,6 +18,7 @@
       "title": "Services",
       "search": "Search services...",
       "searchPlaceholder": "Search...",
+      "filterCategory": "Filter by category",
       "noResults": "No subcategories found.",
       "noSearchResults": "No results for \"{query}\"",
       "noReviews": "No reviews available yet",

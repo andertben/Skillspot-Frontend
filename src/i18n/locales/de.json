@@ -18,6 +18,7 @@
       "title": "Dienstleistungen",
       "search": "Dienstleistung suchen...",
       "searchPlaceholder": "Suchen...",
+      "filterCategory": "Nach Kategorie filtern",
       "noResults": "Keine Unterkategorien gefunden.",
       "noSearchResults": "Keine Treffer für \"{query}\"",
       "noReviews": "Noch keine Bewertungen vorhanden",
