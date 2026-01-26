@@ -1,4 +1,3 @@
-import type { Category } from '@/types/Category'
 
 export interface NormalizedCategory {
   id: number
